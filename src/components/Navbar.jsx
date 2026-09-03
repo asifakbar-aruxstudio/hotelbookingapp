@@ -1,12 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import logo from '../assets/logo.png';
-import magnify from '../assets/magnify.png';
+import search from '../assets/search.png';
 import menuicon from '../assets/menuicon.png';
 import close from '../assets/close.png';
-
-
-
 
 
 const Navbar = () => {
@@ -47,7 +44,9 @@ const Navbar = () => {
                             <div className={`${isScrolled ? "bg-gray-700" : "bg-white"} h-0.5 w-0 group-hover:w-full transition-all duration-300`} />
                         </Link>
                     ))}
-                    <button className={`border px-4 py-1 text-sm font-light rounded-full cursor-pointer ${isScrolled ? 'text-black' : 'text-white'} transition-all`}>
+                    <button className={`border px-4 py-1 text-sm font-light 
+                        rounded-full cursor-pointer 
+                        ${isScrolled ? 'text-black' : 'text-white'} transition-all`}>
                         Dashboard
                     </button>
                 </div>
@@ -55,7 +54,7 @@ const Navbar = () => {
                 {/* Desktop Right */}
                 <div className="hidden md:flex items-center gap-4">
 
-                      <img src={magnify} alt="Search" className={`h-8 w-8 rounded-full
+                      <img src={search} alt="Search" className={`h-8 w-8 rounded-full
                          ${isScrolled ? "invert" : ""} transition-all duration-300`} />                
                    
                    <button className={`px-8 py-2.5 rounded-full ml-4 transition-all duration-500 
