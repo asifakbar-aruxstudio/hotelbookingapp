@@ -4,6 +4,7 @@ import clender from '../assets/clender.png'
 import search from '../assets/search.png'
 import cities from '../data/cities.jsx'
 
+
 const Hero = () => {
   return (
     <div className="relative flex flex-col items-center justify-center 
