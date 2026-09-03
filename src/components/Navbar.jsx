@@ -1,16 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import assets from '../assets/logo.png';
+import logo from '../assets/logo.png';
+import { IoSearchOutline } from "react-icons/io5";
 
 const Navbar = () => {
     const navLinks = [
         { name: 'Home', path: '/' },
-        { name: 'Hotels', path: '/hotels' },
-        { name: 'Contact', path: '/contact' },
+        { name: 'Hotels', path: '/rooms' },
+        { name: 'Experience', path: '/experience' },
         { name: 'About', path: '/about' },
     ];
-
-    
 
     const [isScrolled, setIsScrolled] = React.useState(false);
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
@@ -30,9 +29,8 @@ const Navbar = () => {
              "py-4 md:py-6"}`}>
                 {/* Logo */}
                 <Link to="/" className="flex items-center gap-2">
-                    <img src={assets.logo} alt="Logo"
-                    className={`h-9 ${isScrolled && "invert opacity-80"}`} />
-    
+                    <img src={logo} alt="Logo"
+                    className={`h-15 ${isScrolled && "invert opacity-80"}`} />
                 </Link>
 
                 {/* Desktop Nav */}
@@ -44,16 +42,13 @@ const Navbar = () => {
                         </Link>
                     ))}
                     <button className={`border px-4 py-1 text-sm font-light rounded-full cursor-pointer ${isScrolled ? 'text-black' : 'text-white'} transition-all`}>
-                        New Launch
+                        Dashboard
                     </button>
                 </div>
 
                 {/* Desktop Right */}
                 <div className="hidden md:flex items-center gap-4">
-                    <svg className={`h-6 w-6 text-white transition-all duration-500 ${isScrolled ? "invert" : ""}`} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                        <circle cx="11" cy="11" r="8" />
-                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                    </svg>
+                      <image src={ IoSearchOutline } alt="User" className={`h-8 w-8 rounded-full ${isScrolled ? "invert" : ""}`} />                
                     <button className={`px-8 py-2.5 rounded-full ml-4 transition-all duration-500 ${isScrolled ? "text-white bg-black" : "bg-white text-black"}`}>
                         Login
                     </button>
@@ -84,7 +79,7 @@ const Navbar = () => {
                     ))}
 
                     <button className="border px-4 py-1 text-sm font-light rounded-full cursor-pointer transition-all">
-                        New Launch
+                        Dashboard
                     </button>
 
                     <button className="bg-black text-white px-8 py-2.5 rounded-full transition-all duration-500">
