@@ -2,6 +2,7 @@ import React from 'react'
 import hotel from '../assets/hotel.png'
 import clender from '../assets/clender.png'
 import search from '../assets/search.png'
+import cities from '../data/cities.jsx'
 
 const Hero = () => {
   return (
@@ -43,7 +44,6 @@ const Hero = () => {
                  <img src={hotel} alt="HOTEL" className='w-4 h-4' />
                     <label htmlFor="destinationInput">Destination</label>
                 </div>
-            
                 <input 
                 list='destinations' 
                 id="destinationInput" 
@@ -52,7 +52,15 @@ const Hero = () => {
                 py-1.5 mt-1.5 text-sm outline-none" 
                 placeholder="Type here" 
                 required />
-      
+                <datalist id="destinations" className='text-sm items-center' >
+                    {
+                      cities.map((city, index) => (
+                        <option key={index} value={city} />
+                      ))
+                    }
+            
+                    
+                </datalist>
             </div>
 
             <div>
