@@ -3,54 +3,15 @@
 // All icons use react-icons/fa (Font Awesome).
 
 export {
-  FaHotel,
-  FaBars,
-  FaTimes,
-  FaUserCircle,
-  FaSignOutAlt,
-  FaSearch,
-
+  FaHotel,FaBars,FaTimes, FaUserCircle,FaSignOutAlt,FaSearch,
   // Hero / Home
-  FaMapMarkerAlt,
-  FaCalendarAlt,
-  FaUserFriends,
-  FaStar,
-  FaArrowRight,
-  FaPlay,
-
+  FaMapMarkerAlt,FaCalendarAlt,FaUserFriends,FaStar,FaArrowRight,FaPlay,
   // Hotel Amenities
-  FaWifi,
-  FaSwimmingPool,
-  FaParking,
-  FaUtensils,
-  FaSnowflake,
-  FaTv,
-  FaDumbbell,
-  FaCoffee,
-  FaConciergeBell,
-  FaShieldAlt,
-  FaPaw,
-  FaSmokingBan,
-
+  FaWifi,FaSwimmingPool,FaParking,FaUtensils,FaSnowflake,FaTv,FaDumbbell,FaCoffee,FaConciergeBell,FaShieldAlt,FaPaw,FaSmokingBan,
   // Hotel / Room Listing
-  FaFilter,
-  FaSortAmountDown,
-  FaHeart,
-  FaRegHeart,
-  FaShareAlt,
-  FaImages,
-  FaBed,
-  FaRulerCombined,
-  FaDollarSign,
-
+  FaFilter,FaSortAmountDown,FaHeart,FaRegHeart,FaShareAlt,FaImages,FaBed,FaRulerCombined,FaDollarSign,
   // Booking
-  FaCheckCircle,
-  FaClock,
-  FaTimesCircle,
-  FaCreditCard,
-  FaLock,
-  FaReceipt,
-  FaPercentage,
+  FaCheckCircle,FaClock,FaTimesCircle,FaCreditCard,FaLock,FaReceipt,FaPercentage,
 
   // Login / Sign Up
   FaUser,
