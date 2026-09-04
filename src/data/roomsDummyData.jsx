@@ -603,4 +603,3 @@ export const roomsDummyData = [
   }
 ];
 
-export default roomsDummyData;
