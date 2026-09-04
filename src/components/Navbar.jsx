@@ -1,5 +1,4 @@
-
-import {React , useState, useEffect } from 'react';
+import {useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import logo from '../assets/logo.png';
 import search from '../assets/search.png';
@@ -7,6 +6,7 @@ import menuicon from '../assets/menuicon.png';
 import close from '../assets/close.png';
 import { useClerk , useUser ,UserButton  } from '@clerk/react';
 import { useNavigate , useLocation } from 'react-router-dom';
+
 
 const BookingIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
