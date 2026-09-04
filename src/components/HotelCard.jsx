@@ -1,4 +1,3 @@
-import React from 'react'
 import { Link } from 'react-router-dom'
 import stars from '../assets/stars.png'
 import location from '../assets/location.png'
