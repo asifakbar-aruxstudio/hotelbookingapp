@@ -1,4 +1,4 @@
-import { roomsDummyData } from "./data/roomsDummyData"
+import { roomsDummyData } from "../data/roomsDummyData"
 import HotelCard from "./HotelCard"
 
 const FeatureDestinations = () => {
