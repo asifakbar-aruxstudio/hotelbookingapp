@@ -1,4 +1,5 @@
-import React from 'react';
+
+import {React , useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import logo from '../assets/logo.png';
 import search from '../assets/search.png';
@@ -21,8 +22,8 @@ const Navbar = () => {
         { name: 'About', path: '/about' },
     ];
 
-    const [isScrolled, setIsScrolled] = React.useState(false);
-    const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+    const [isScrolled, setIsScrolled] = useState(false);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const {openSignIn} = useClerk();
     const { user } = useUser();
@@ -31,13 +32,21 @@ const Navbar = () => {
 
 
 
-    React.useEffect(() => {
+    useEffect(() => {
+        if(location.pathname !== '/') {
+            setIsScrolled(true);
+            return;
+        }else{
+            setIsScrolled(false);
+        }
+         setIsScrolled(window.scrollY > 10);
+
         const handleScroll = () => {
-            setIsScrolled(window.scrollY > 10);
+            setIsScrolled(prev => location.pathname !== '/' ? true : prev );
         };
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
-    }, []);
+    }, [location.pathname]);
 
     return (
             <nav className={`fixed top-0 left-0 w-full flex items-center 
