@@ -18,5 +18,4 @@ const isOwnerPath = useLocation().pathname.includes('/owner');
     </>
   )
 }
-
 export default App

@@ -27,7 +27,8 @@ const Footer = () => {
 
       {/* decorative watermark icon */}
       <svg
-        className="hidden md:block absolute -bottom-30 -left-80 opacity-5 w-full h-full pointer-events-none"
+        className="hidden md:block absolute -bottom-30 -left-80 
+        opacity-5 w-full h-full pointer-events-none"
         width="68" height="26" viewBox="0 0 68 26" fill="none" xmlns="http://www.w3.org/2000/svg"
       >
         <g clipPath="url(#clip0_8678_1074)">
@@ -46,7 +47,7 @@ const Footer = () => {
         {/* Brand */}
         <div className="sm:col-span-2 lg:col-span-1">
           <Link to="/" className="inline-block">
-            <img src={logo} alt="Logo" className="h-9" />
+            <img src={logo} alt="Logo" className="h-20" />
           </Link>
           <p className="text-sm/7 mt-6 max-w-xs">
             Book verified hotels across Pakistan at the best prices — from budget
