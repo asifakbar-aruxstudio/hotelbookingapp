@@ -1,6 +1,16 @@
-import React from 'react'
+
 
 const cities = [
+  "Karachi",
+  "Islamabad",
+  "Lahore",
+  "Hyderabad",
+  "Sukkur",
+  "Larkana",
+  "Nawabshah",
+  "Mirpur Khas",
+  "Jacobabad",
+  "Shikarpur",
   "Lahore",
   "Faisalabad",
   "Rawalpindi",

@@ -99,7 +99,7 @@ const Footer = () => {
         <div>
           <h2 className="font-semibold mb-5 text-gray-800">Popular Cities</h2>
           <div className="flex flex-col space-y-2.5">
-            {cities.slice(0, 4).map((city, i) => (
+            {cities.slice(0 , 5).map((city, i) => (
               <Link
                 key={i}
                 to={`/rooms?city=${city}`}
