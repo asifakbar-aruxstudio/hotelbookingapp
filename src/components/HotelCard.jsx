@@ -9,7 +9,8 @@ const HotelCard = ({ room, index }) => {
       onClick={() => scrollTo(0, 0)}
       className="block"
     >
-      <div className="relative max-w-70 w-full rounded-xl overflow-hidden bg-white text-gray-500/90 shadow-[0px_4px_4px_rgba(0,0,0,0.05)]">
+      <div className="relative max-w-70 w-full rounded-xl overflow-hidden 
+      bg-gray-200 text-gray-500/90 shadow-[0px_4px_4px_rgba(0,0,0,0.05)]">
 
         {/* Room Image */}
         <img
@@ -64,7 +65,8 @@ const HotelCard = ({ room, index }) => {
 
             <button
               type="button"
-              className="px-4 py-1 text-sm font-light rounded-full cursor-pointer transition-all bg-gray-100 hover:bg-gray-200"
+              className="px-4 py-1 text-sm font-light rounded-md cursor-pointer 
+              transition-all bg-green-200 hover:bg-green-400"
             >
               Book Now
             </button>
