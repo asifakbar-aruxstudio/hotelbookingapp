@@ -1,5 +1,3 @@
-
-
 export const roomsDummyData = [
   {
     id: "BK001",
@@ -10,7 +8,7 @@ export const roomsDummyData = [
       name: "Ahmed Khan",
       email: "ahmed@example.com",
       phone: "+92 300 1234567",
-      avatar: "/images/users/user-1.jpg"
+      avatar: "https://i.pravatar.cc/150?u=USR001"
     },
 
     hotel: {
@@ -18,7 +16,7 @@ export const roomsDummyData = [
       name: "Grand Lahore Hotel",
       city: "Lahore",
       province: "Punjab",
-      image: "/images/hotels/lahore.jpg",
+      image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80",
       address: "Gulberg III, Lahore"
     },
 
@@ -26,7 +24,7 @@ export const roomsDummyData = [
       id: 101,
       type: "Deluxe King Room",
       roomNumber: "205",
-      image: "/images/rooms/deluxe-room-1.jpg",
+      image: "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800&q=80",
       guests: 2,
       beds: "1 King Bed"
     },
@@ -70,7 +68,7 @@ export const roomsDummyData = [
       name: "Ayesha Malik",
       email: "ayesha@example.com",
       phone: "+92 301 7654321",
-      avatar: "/images/users/user-2.jpg"
+      avatar: "https://i.pravatar.cc/150?u=USR002"
     },
 
     hotel: {
@@ -78,7 +76,7 @@ export const roomsDummyData = [
       name: "Serena Islamabad",
       city: "Islamabad",
       province: "Islamabad Capital Territory",
-      image: "/images/hotels/islamabad.jpg",
+      image: "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800&q=80",
       address: "Khayaban-e-Suhrawardy, Islamabad"
     },
 
@@ -86,7 +84,7 @@ export const roomsDummyData = [
       id: 102,
       type: "Executive Suite",
       roomNumber: "408",
-      image: "/images/rooms/executive-suite-1.jpg",
+      image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80",
       guests: 3,
       beds: "1 King Bed"
     },
@@ -130,7 +128,7 @@ export const roomsDummyData = [
       name: "Usman Ali",
       email: "usman@example.com",
       phone: "+92 302 9876543",
-      avatar: "/images/users/user-3.jpg"
+      avatar: "https://i.pravatar.cc/150?u=USR003"
     },
 
     hotel: {
@@ -138,7 +136,7 @@ export const roomsDummyData = [
       name: "Pearl Continental Karachi",
       city: "Karachi",
       province: "Sindh",
-      image: "/images/hotels/karachi.jpg",
+      image: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800&q=80",
       address: "Club Road, Karachi"
     },
 
@@ -146,7 +144,7 @@ export const roomsDummyData = [
       id: 103,
       type: "Double Room",
       roomNumber: "312",
-      image: "/images/rooms/double-room-1.jpg",
+      image: "https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800&q=80",
       guests: 2,
       beds: "1 King Bed"
     },
@@ -190,7 +188,7 @@ export const roomsDummyData = [
       name: "Bilal Ahmed",
       email: "bilal@example.com",
       phone: "+92 303 4567890",
-      avatar: "/images/users/user-4.jpg"
+      avatar: "https://i.pravatar.cc/150?u=USR004"
     },
 
     hotel: {
@@ -198,7 +196,7 @@ export const roomsDummyData = [
       name: "Royal Palace Hotel",
       city: "Sukkur",
       province: "Sindh",
-      image: "/images/hotels/sukkur.jpg",
+      image: "https://images.unsplash.com/photo-1445019980597-93fa8acb246c?w=800&q=80",
       address: "Military Road, Sukkur"
     },
 
@@ -206,7 +204,7 @@ export const roomsDummyData = [
       id: 104,
       type: "Single Room",
       roomNumber: "106",
-      image: "/images/rooms/single-room-1.jpg",
+      image: "https://images.unsplash.com/photo-1598928506311-c55ded91a20c?w=800&q=80",
       guests: 1,
       beds: "1 Single Bed"
     },
@@ -250,7 +248,7 @@ export const roomsDummyData = [
       name: "Hina Shah",
       email: "hina@example.com",
       phone: "+92 304 1122334",
-      avatar: "/images/users/user-5.jpg"
+      avatar: "https://i.pravatar.cc/150?u=USR005"
     },
 
     hotel: {
@@ -258,7 +256,7 @@ export const roomsDummyData = [
       name: "Pearl Mountain Resort",
       city: "Murree",
       province: "Punjab",
-      image: "/images/hotels/murree.jpg",
+      image: "https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?w=800&q=80",
       address: "Bhurban, Murree"
     },
 
@@ -266,7 +264,7 @@ export const roomsDummyData = [
       id: 105,
       type: "Family Room",
       roomNumber: "502",
-      image: "/images/rooms/family-room-1.jpg",
+      image: "https://images.unsplash.com/photo-1595576508898-0ad5c879a061?w=800&q=80",
       guests: 5,
       beds: "1 King + 2 Single Beds"
     },
@@ -310,7 +308,7 @@ export const roomsDummyData = [
       name: "Hamza Raza",
       email: "hamza@example.com",
       phone: "+92 305 9988776",
-      avatar: "/images/users/user-6.jpg"
+      avatar: "https://i.pravatar.cc/150?u=USR006"
     },
 
     hotel: {
@@ -318,7 +316,7 @@ export const roomsDummyData = [
       name: "Shangrila Resort",
       city: "Skardu",
       province: "Gilgit-Baltistan",
-      image: "/images/hotels/skardu.jpg",
+      image: "https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=800&q=80",
       address: "Lower Kachura Lake, Skardu"
     },
 
@@ -326,7 +324,7 @@ export const roomsDummyData = [
       id: 106,
       type: "Deluxe King Room",
       roomNumber: "301",
-      image: "/images/rooms/deluxe-room-1.jpg",
+      image: "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800&q=80",
       guests: 2,
       beds: "1 King Bed"
     },
@@ -370,7 +368,7 @@ export const roomsDummyData = [
       name: "Sara Ahmed",
       email: "sara@example.com",
       phone: "+92 306 5544332",
-      avatar: "/images/users/user-7.jpg"
+      avatar: "https://i.pravatar.cc/150?u=USR007"
     },
 
     hotel: {
@@ -378,7 +376,7 @@ export const roomsDummyData = [
       name: "Grand Hyderabad Hotel",
       city: "Hyderabad",
       province: "Sindh",
-      image: "/images/hotels/hyderabad.jpg",
+      image: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800&q=80",
       address: "Autobhan Road, Hyderabad"
     },
 
@@ -386,7 +384,7 @@ export const roomsDummyData = [
       id: 107,
       type: "Twin Room",
       roomNumber: "214",
-      image: "/images/rooms/twin-room-1.jpg",
+      image: "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=800&q=80",
       guests: 4,
       beds: "2 Single Beds"
     },
@@ -431,7 +429,7 @@ export const roomsDummyData = [
       name: "Danish Iqbal",
       email: "danish@example.com",
       phone: "+92 307 7788990",
-      avatar: "/images/users/user-8.jpg"
+      avatar: "https://i.pravatar.cc/150?u=USR008"
     },
 
     hotel: {
@@ -439,7 +437,7 @@ export const roomsDummyData = [
       name: "Executive Quetta Hotel",
       city: "Quetta",
       province: "Balochistan",
-      image: "/images/hotels/quetta.jpg",
+      image: "https://images.unsplash.com/photo-1445019980597-93fa8acb246c?w=800&q=80",
       address: "Jinnah Road, Quetta"
     },
 
@@ -447,7 +445,7 @@ export const roomsDummyData = [
       id: 108,
       type: "Executive Suite",
       roomNumber: "401",
-      image: "/images/rooms/executive-suite-1.jpg",
+      image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80",
       guests: 3,
       beds: "1 King Bed"
     },
@@ -491,7 +489,7 @@ export const roomsDummyData = [
       name: "Maryam Noor",
       email: "maryam@example.com",
       phone: "+92 308 3344556",
-      avatar: "/images/users/user-9.jpg"
+      avatar: "https://i.pravatar.cc/150?u=USR009"
     },
 
     hotel: {
@@ -499,7 +497,7 @@ export const roomsDummyData = [
       name: "Gwadar Pearl Resort",
       city: "Gwadar",
       province: "Balochistan",
-      image: "/images/hotels/gwadar.jpg",
+      image: "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800&q=80",
       address: "Marine Drive, Gwadar"
     },
 
@@ -507,7 +505,7 @@ export const roomsDummyData = [
       id: 109,
       type: "Deluxe Room",
       roomNumber: "208",
-      image: "/images/rooms/deluxe-room-1.jpg",
+      image: "https://images.unsplash.com/photo-1595576508898-0ad5c879a061?w=800&q=80",
       guests: 2,
       beds: "1 King Bed"
     },
@@ -551,7 +549,7 @@ export const roomsDummyData = [
       name: "Owais Siddiqui",
       email: "owais@example.com",
       phone: "+92 309 6677889",
-      avatar: "/images/users/user-10.jpg"
+      avatar: "https://i.pravatar.cc/150?u=USR010"
     },
 
     hotel: {
@@ -559,7 +557,7 @@ export const roomsDummyData = [
       name: "Royal Peshawar Hotel",
       city: "Peshawar",
       province: "Khyber Pakhtunkhwa",
-      image: "/images/hotels/peshawar.jpg",
+      image: "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800&q=80",
       address: "University Road, Peshawar"
     },
 
@@ -567,7 +565,7 @@ export const roomsDummyData = [
       id: 110,
       type: "Single Room",
       roomNumber: "115",
-      image: "/images/rooms/single-room-1.jpg",
+      image: "https://images.unsplash.com/photo-1598928506311-c55ded91a20c?w=800&q=80",
       guests: 1,
       beds: "1 Single Bed"
     },
@@ -602,4 +600,3 @@ export const roomsDummyData = [
     specialRequest: "Non-smoking room."
   }
 ];
-
