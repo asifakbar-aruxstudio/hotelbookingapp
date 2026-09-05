@@ -169,7 +169,7 @@ export const exclusiveOffers = [
       "Parking"
     ],
     description:
-      "A luxurious mountain resort offering beautiful views, premium rooms and world-class facilities.",
+      "A luxurious mountain resort offering beautiful views",
     featured: true
   }
 ];
