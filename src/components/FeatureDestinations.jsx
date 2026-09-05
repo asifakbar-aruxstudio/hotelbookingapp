@@ -3,8 +3,8 @@ import HotelCard from "./HotelCard"
 
 const FeatureDestinations = () => {
   return (
-    <div>
-      <div>
+    <div className="flex flex-col items-center justify-center gap-4 py-8 mt-20">
+      <div className="flex flex-wrap justify-center gap-4">
         {roomsDummyData.slice(0, 4).map((room, index) => (
           <HotelCard
             key={room.id}
