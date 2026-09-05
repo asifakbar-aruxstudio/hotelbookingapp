@@ -25,32 +25,5 @@ export const testimonials = [
     rating: 4,
     review:
       "Customer support helped me change my check-in date within minutes. Really impressed with how responsive the team was.",
-  },
-  {
-    id: 4,
-    name: "Hina Shah",
-    city: "Sukkur",
-    avatar: "https://i.pravatar.cc/150?u=testimonial4",
-    rating: 5,
-    review:
-      "The exclusive offers section saved me a good amount on my family trip to Skardu. Everything was exactly as described.",
-  },
-  {
-    id: 5,
-    name: "Bilal Ahmed",
-    city: "Hyderabad",
-    avatar: "https://i.pravatar.cc/150?u=testimonial5",
-    rating: 5,
-    review:
-      "Clean interface, fast bookings, and no hidden charges. This is now my go-to app whenever I travel within Pakistan.",
-  },
-  {
-    id: 6,
-    name: "Maryam Noor",
-    city: "Quetta",
-    avatar: "https://i.pravatar.cc/150?u=testimonial6",
-    rating: 4,
-    review:
-      "Loved the variety of hotels available, from budget rooms to luxury resorts. Made planning our Gwadar trip really easy.",
-  },
+  }  
 ];
