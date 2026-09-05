@@ -22,7 +22,7 @@ const ExclusiveOffers = () => {
           <div key={item.id} 
           className="group relative flex flex-col items-start md:flex-row items-center 
           justify-between gap-1 pt-12 md:pt-18 px-4 rounded-xl shadow-md transition-all 
-          hover:shadow-lg bg-no-repeat bg-cover bg-center" 
+          hover:shadow-lg bg-no-repeat bg-cover bg-center mb-10" 
           style={{ backgroundImage: `url(${item.image})` }}>
               <p className="text-2xl font-semibold text-white">{item.price}% OFF </p>
               <div>

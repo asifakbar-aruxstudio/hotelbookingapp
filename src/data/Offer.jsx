@@ -59,93 +59,6 @@ export const exclusiveOffers = [
 
   {
     id: 3,
-    name: "Avari Hotel",
-    city: "Lahore",
-    province: "Punjab",
-    location: "Mall Road, Lahore",
-    image: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800&q=80",
-    rating: 4.6,
-    reviews: 870,
-    price: 28000,
-    oldPrice: 34000,
-    discount: 18,
-    currency: "PKR",
-    rooms: 110,
-    availableRooms: 8,
-    type: "Business Hotel",
-    amenities: [
-      "Free WiFi",
-      "Restaurant",
-      "Gym",
-      "Swimming Pool",
-      "Parking",
-      "Room Service"
-    ],
-    description:
-      "A premium hotel in Lahore offering comfortable accommodation, fine dining and business facilities.",
-    featured: true
-  },
-
-  {
-    id: 4,
-    name: "Mövenpick Hotel",
-    city: "Karachi",
-    province: "Sindh",
-    location: "Club Road, Karachi",
-    image: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800&q=80",
-    rating: 4.5,
-    reviews: 760,
-    price: 27000,
-    oldPrice: 32000,
-    discount: 16,
-    currency: "PKR",
-    rooms: 160,
-    availableRooms: 20,
-    type: "Luxury Hotel",
-    amenities: [
-      "Free WiFi",
-      "Swimming Pool",
-      "Fitness Center",
-      "Restaurant",
-      "Parking",
-      "Airport Shuttle"
-    ],
-    description:
-      "A modern luxury hotel providing spacious rooms and premium services for business and leisure travelers.",
-    featured: true
-  },
-
-  {
-    id: 5,
-    name: "Ramada Plaza",
-    city: "Karachi",
-    province: "Sindh",
-    location: "Shahrah-e-Faisal, Karachi",
-    image: "https://images.unsplash.com/photo-1445019980597-93fa8acb246c?w=800&q=80",
-    rating: 4.4,
-    reviews: 650,
-    price: 22000,
-    oldPrice: 27000,
-    discount: 19,
-    currency: "PKR",
-    rooms: 130,
-    availableRooms: 12,
-    type: "Business Hotel",
-    amenities: [
-      "Free WiFi",
-      "Restaurant",
-      "Parking",
-      "Gym",
-      "Room Service",
-      "Air Conditioning"
-    ],
-    description:
-      "A comfortable business hotel conveniently located near Karachi's major commercial areas.",
-    featured: true
-  },
-
-  {
-    id: 6,
     name: "Luxus Grand Hotel",
     city: "Lahore",
     province: "Punjab",
@@ -174,7 +87,7 @@ export const exclusiveOffers = [
   },
 
   {
-    id: 7,
+    id: 4,
     name: "Sarena Hotel Sukkur",
     city: "Sukkur",
     province: "Sindh",
@@ -201,36 +114,9 @@ export const exclusiveOffers = [
     featured: true
   },
 
+  
   {
-    id: 8,
-    name: "Indus Hotel",
-    city: "Hyderabad",
-    province: "Sindh",
-    location: "Autobhan Road, Hyderabad",
-    image: "https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800&q=80",
-    rating: 4.2,
-    reviews: 280,
-    price: 10000,
-    oldPrice: 13000,
-    discount: 23,
-    currency: "PKR",
-    rooms: 60,
-    availableRooms: 11,
-    type: "Family Hotel",
-    amenities: [
-      "Free WiFi",
-      "Restaurant",
-      "Parking",
-      "Room Service",
-      "Air Conditioning"
-    ],
-    description:
-      "A family-friendly hotel providing comfortable rooms and essential facilities in Hyderabad.",
-    featured: true
-  },
-
-  {
-    id: 9,
+    id: 5,
     name: "Shangrila Resort",
     city: "Skardu",
     province: "Gilgit-Baltistan",
@@ -259,7 +145,7 @@ export const exclusiveOffers = [
   },
 
   {
-    id: 10,
+    id: 6,
     name: "Pearl Continental Bhurban",
     city: "Murree",
     province: "Punjab",
