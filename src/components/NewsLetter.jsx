@@ -32,10 +32,11 @@ const NewsLetter = () => {
         flex flex-col items-center text-center"
       >
         {/* decorative glow blobs */}
-        <div className="absolute -top-24 -left-24 w-72 h-72 bg-orange-500/20 rounded-full blur-3xl" />
-        <div className="absolute -bottom-24 -right-24 w-72 h-72 bg-blue-500/20 rounded-full blur-3xl" />
+        <div className="absolute -top-24 -left-24 w-72 h-72 bg-green-500/20 rounded-full blur-3xl" />
+        <div className="absolute -bottom-24 -right-24 w-72 h-72 bg-orang-500/20 rounded-full blur-3xl" />
 
-        <span className="relative z-10 text-xs sm:text-sm uppercase tracking-widest text-orange-400 font-semibold">
+        <span className="relative z-10 text-xs sm:text-sm uppercase tracking-widest text-green-400 
+        font-playfaire">
           Stay in the loop
         </span>
 
@@ -59,13 +60,13 @@ const NewsLetter = () => {
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Enter your email address"
             className="flex-1 px-5 py-3 rounded-full bg-white/10 border border-white/20
-            text-white placeholder-gray-400 outline-none focus:border-orange-400
+            text-white placeholder-gray-400 outline-none focus:border-green-400
             focus:bg-white/15 transition-all duration-300"
           />
           <button
             type="submit"
-            className="px-6 py-3 rounded-full bg-orange-500 hover:bg-orange-600
-            text-white font-medium whitespace-nowrap transition-all duration-300
+            className="px-6 py-3 rounded-full bg-green-500 hover:bg-white/10
+            text-white hover:text-green-400 font-medium whitespace-nowrap transition-all duration-300
             cursor-pointer active:scale-95"
           >
             Subscribe
