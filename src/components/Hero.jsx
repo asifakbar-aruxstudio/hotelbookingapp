@@ -1,106 +1,158 @@
-
 import hotel from '../assets/hotel.png'
 import clender from '../assets/clender.png'
 import search from '../assets/search.png'
 import cities from '../data/cities.js'
 
-
 const Hero = () => {
   return (
-    <div className="relative flex flex-col items-center justify-center 
-    h-screen w-full overflow-hidden">
-      
-      {/* Blurred background image layer */}
-      <div
-        className="absolute inset-0 bg-no-repeat bg-cover bg-center scale-110 blur-sm"
-        style={{ backgroundImage: `url('/pexels.jpg')` }}>
-      </div>
+    <div className="relative flex flex-col items-center justify-center
+    min-h-screen w-full overflow-hidden">
 
-      {/* Dark overlay for text readability */}
-      <div className="absolute inset-0 bg-black/40"></div>
+      {/* Background image layer */}
+      <div
+        className="absolute inset-0 bg-no-repeat bg-cover bg-center scale-105"
+        style={{
+          backgroundImage:
+            "url('https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1600&q=80')",
+        }}
+      />
+
+      {/* Gradient overlay for readability, darker at the bottom for the form */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70" />
 
       {/* Content */}
-      <div className="relative z-10 flex flex-col items-center gap-6 
-      max-w-4xl mx-auto px-6 md:px-16 lg:px-24 xl:px-32 text-white text-center mt-30">
-        
-        <span className="px-4 py-1 text-sm rounded-full bg-green-400/10 border 
-        border-white/30 backdrop-blur-sm">
-         Welcome to Our Platform 
+      <div className="relative z-10 flex flex-col items-center gap-5 sm:gap-6
+      max-w-4xl w-full mx-auto px-5 sm:px-8 md:px-16 lg:px-24 xl:px-32
+      text-white text-center pt-28 pb-16">
+
+        <span className="flex items-center gap-2 px-4 py-1.5 text-xs sm:text-sm
+        rounded-full bg-green-400/10 border border-white/30 backdrop-blur-sm
+        text-green-300 font-medium">
+          <span className="w-1.5 h-1.5 rounded-full bg-green-400" />
+          Welcome to Our Platform
         </span>
 
-        <h1 className="text-6xl md:text-5xl lg:text-6xl font-bold leading-tight">
-          Find Your Perfect  <span className="text-green-400">Stay</span>
+        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight
+        tracking-tight">
+          Find Your Perfect <span className="text-green-400">Stay</span>
         </h1>
 
-        <p className="text-base md:text-lg text-gray-200 max-w-lg">
-          Discover the best hotels at the best prices.Book your unforgettable experience today.
+        <p className="text-sm sm:text-base md:text-lg text-gray-200 max-w-md md:max-w-lg">
+          Discover the best hotels at the best prices. Book your unforgettable
+          experience today.
         </p>
 
-     {/* // form start here  */}
-        <form className='bg-white text-gray-500 rounded-lg px-6 py-4 
-         flex flex-col md:flex-row max-md:items-start gap-4 max-md:mx-auto'>
-
-            <div>
-                <div className='flex items-center gap-2'> 
-                 <img src={hotel} alt="HOTEL" className='w-4 h-4' />
-                    <label htmlFor="destinationInput">Destination</label>
-                </div>
-                <input 
-                list='destinations' 
-                id="destinationInput" 
-                type="text" 
-                className=" rounded border border-gray-200 px-3 
-                py-1.5 mt-1.5 text-sm outline-none" 
-                placeholder="Type here" 
-                required />
-                <datalist id="destinations" className='text-sm items-center' >
-                    {
-                      cities.map((city, index) => (
-                        <option key={index} value={city} />
-                      ))
-                    }
-            
-                    
-                </datalist>
+        {/* Search form */}
+        <form
+          className="w-full max-w-5xl bg-white text-gray-600 rounded-2xl
+          shadow-2xl mt-4 p-4 sm:p-5
+          grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_0.7fr_auto]
+          gap-4 lg:gap-0 lg:divide-x lg:divide-gray-200 items-end text-left"
+        >
+          {/* Destination */}
+          <div className="flex flex-col gap-1.5 lg:px-4 lg:first:pl-0">
+            <div className="flex items-center gap-2 text-xs font-medium text-gray-500 uppercase tracking-wide">
+              <img src={hotel} alt="" className="w-4 h-4 opacity-70" />
+              <label htmlFor="destinationInput">Destination</label>
             </div>
+            <input
+              list="destinations"
+              id="destinationInput"
+              type="text"
+              className="w-full rounded-lg border border-gray-200 px-3 py-2.5
+              text-sm outline-none focus:border-green-400 focus:ring-2
+              focus:ring-green-100 transition-all"
+              placeholder="Where are you going?"
+              required
+            />
+            <datalist id="destinations">
+              {cities.map((city, index) => (
+                <option key={index} value={city} />
+              ))}
+            </datalist>
+          </div>
 
-            <div>
-                <div className='flex items-center gap-2'>
-                  <img src={clender} alt="CALENDAR" className='w-4 h-4' />
-                  <label htmlFor="checkIn">Check in</label>
-                </div>
-                <input id="checkIn" type="date" className=" rounded border border-gray-200 px-3 py-1.5 mt-1.5 text-sm outline-none" />             
+          {/* Check in */}
+          <div className="flex flex-col gap-1.5 lg:px-4">
+            <div className="flex items-center gap-2 text-xs font-medium text-gray-500 uppercase tracking-wide">
+              <img src={clender} alt="" className="w-4 h-4 opacity-70" />
+              <label htmlFor="checkIn">Check in</label>
             </div>
+            <input
+              id="checkIn"
+              type="date"
+              className="w-full rounded-lg border border-gray-200 px-3 py-2.5
+              text-sm outline-none focus:border-green-400 focus:ring-2
+              focus:ring-green-100 transition-all"
+            />
+          </div>
 
-            <div>
-                <div className='flex items-center gap-2'>
-                    <img src={clender} alt="CALENDAR" className='w-4 h-4' />
-                    <label htmlFor="checkOut">Check out</label>
-                </div>
-                <input id="checkOut" type="date" 
-                className=" rounded border border-gray-200 px-3 py-1.5 mt-1.5 text-sm outline-none" />
+          {/* Check out */}
+          <div className="flex flex-col gap-1.5 lg:px-4">
+            <div className="flex items-center gap-2 text-xs font-medium text-gray-500 uppercase tracking-wide">
+              <img src={clender} alt="" className="w-4 h-4 opacity-70" />
+              <label htmlFor="checkOut">Check out</label>
             </div>
+            <input
+              id="checkOut"
+              type="date"
+              className="w-full rounded-lg border border-gray-200 px-3 py-2.5
+              text-sm outline-none focus:border-green-400 focus:ring-2
+              focus:ring-green-100 transition-all"
+            />
+          </div>
 
-            <div className='flex md:flex-col max-md:gap-2 max-md:items-center'>
-                <label htmlFor="guests">Guests</label>
-                <input min={1} max={4} id="guests" type="number" className=" rounded border border-gray-200 px-3 py-1.5 mt-1.5 text-sm outline-none  max-w-16" placeholder="0" />
-            </div>
+          {/* Guests */}
+          <div className="flex flex-col gap-1.5 lg:px-4">
+            <label
+              htmlFor="guests"
+              className="text-xs font-medium text-gray-500 uppercase tracking-wide"
+            >
+              Guests
+            </label>
+            <input
+              min={1}
+              max={4}
+              id="guests"
+              type="number"
+              className="w-full rounded-lg border border-gray-200 px-3 py-2.5
+              text-sm outline-none focus:border-green-400 focus:ring-2
+              focus:ring-green-100 transition-all"
+              placeholder="0"
+            />
+          </div>
 
-            <button className='flex items-center justify-center gap-1 rounded-md bg-green-400
-             py-3 px-4 text-white my-auto cursor-pointer max-md:w-full max-md:py-1 hover:bg-green-600' >
-                <img src={search} alt="SEARCH" className='w-4 h-4' />
-                <span>Search</span>
-            </button>
+          {/* Search button */}
+          <button
+            type="submit"
+            className="flex items-center justify-center gap-2 rounded-lg
+            bg-green-500 hover:bg-green-600 active:scale-95 text-white
+            font-medium py-3 px-6 transition-all duration-300 cursor-pointer
+            w-full lg:w-auto lg:ml-4"
+          >
+            <img src={search} alt="" className="w-4 h-4 invert" />
+            <span>Search</span>
+          </button>
         </form>
-{/* // form end here  */}
 
-        <div className="flex items-center justify-center gap-6 mt-6 text-sm text-gray-300">
+        {/* Trust badges */}
+        <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2
+        mt-4 text-xs sm:text-sm text-gray-300">
           <div className="flex items-center gap-2">
-            <span className="text-green-400">✓</span> Verified Hotels
+            <span className="flex items-center justify-center w-4 h-4 rounded-full
+            bg-green-400/20 text-green-400 text-[10px]">✓</span>
+            Verified Hotels
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-green-400">✓</span>  Best Price Guarantee
-          </div> 
+            <span className="flex items-center justify-center w-4 h-4 rounded-full
+            bg-green-400/20 text-green-400 text-[10px]">✓</span>
+            Best Price Guarantee
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="flex items-center justify-center w-4 h-4 rounded-full
+            bg-green-400/20 text-green-400 text-[10px]">✓</span>
+            24/7 Customer Support
+          </div>
         </div>
       </div>
     </div>

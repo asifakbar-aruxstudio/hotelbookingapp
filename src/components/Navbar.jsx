@@ -6,7 +6,6 @@ import menuicon from '../assets/menuicon.png';
 import close from '../assets/close.png';
 import { useClerk, useUser, UserButton } from '@clerk/react';
 
-
 const BookingIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -34,7 +33,7 @@ const Navbar = () => {
 
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-   
+
   const { openSignIn } = useClerk();
   const { user } = useUser();
   const navigate = useNavigate();
@@ -98,14 +97,16 @@ const Navbar = () => {
             />
           </Link>
         ))}
-        <button
-          onClick={() => navigate('/owner')}
-          className={`border px-4 py-1 text-sm font-light rounded-full cursor-pointer
-          transition-all duration-300
-          ${isScrolled ? 'text-gray-700 border-gray-400 hover:bg-gray-100' : 'text-white border-white/70 hover:bg-white/10'}`}
-        >
-          Dashboard
-        </button>
+        {user && (
+          <button
+            onClick={() => navigate('/owner')}
+            className={`border px-4 py-1 text-sm font-light rounded-full cursor-pointer
+            transition-all duration-300
+            ${isScrolled ? 'text-gray-700 border-gray-400 hover:bg-gray-100' : 'text-white border-white/70 hover:bg-white/10'}`}
+          >
+            Dashboard
+          </button>
+        )}
       </div>
 
       {/* Desktop Right */}
@@ -130,7 +131,7 @@ const Navbar = () => {
           </UserButton>
         ) : (
           <button
-            onClick={openSignIn}
+            onClick={() => openSignIn()}
             className={`px-8 py-2.5 rounded-full ml-2 font-medium transition-all duration-500
             ${isScrolled ? 'bg-black text-white hover:bg-gray-800' : 'bg-white text-black hover:bg-gray-100'}`}
           >
