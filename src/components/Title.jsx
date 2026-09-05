@@ -1,6 +1,7 @@
-import React from 'react'
+
 
 const Title = ({Title ,SubTitle ,align , font = "font-playfair"}) => {
+
   return (
     <div className={`flex flex-col justify-center items-center text-center text-${align === "left"
     && "md:items-start md:text-left"}`}>

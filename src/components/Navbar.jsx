@@ -6,6 +6,7 @@ import menuicon from '../assets/menuicon.png';
 import close from '../assets/close.png';
 import { useClerk, useUser, UserButton } from '@clerk/react';
 
+
 const BookingIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -33,7 +34,7 @@ const Navbar = () => {
 
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
+   
   const { openSignIn } = useClerk();
   const { user } = useUser();
   const navigate = useNavigate();

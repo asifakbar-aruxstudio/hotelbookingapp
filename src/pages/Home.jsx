@@ -1,7 +1,8 @@
 import  Hero  from '../components/Hero'
 import FeatureDestinations from '../components/FeatureDestinations';
 import ExclusiveOffers from '../components/ExclusiveOffers';
-
+import Testimonials from "../components/Testimonials";
+import NewsLetter from '../components/NewsLetter';
 
 
 const Home = () => {
@@ -10,6 +11,8 @@ const Home = () => {
     <Hero />
     <FeatureDestinations />
     <ExclusiveOffers />
+    <Testimonials />
+    <NewsLetter />
     </>
   )
 }

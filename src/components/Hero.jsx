@@ -1,8 +1,8 @@
-import React from 'react'
+
 import hotel from '../assets/hotel.png'
 import clender from '../assets/clender.png'
 import search from '../assets/search.png'
-import cities from '../data/cities.jsx'
+import cities from '../data/cities.js'
 
 
 const Hero = () => {
