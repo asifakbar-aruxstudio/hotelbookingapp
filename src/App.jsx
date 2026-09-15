@@ -8,6 +8,7 @@ import PrivacyPolicy from './pages/PrivacyPolicy'
 import TermsOfService from './pages/TermsOfService'
 import CookiePolicy from './pages/CookiePolicy'
 import Footer from './components/Footer'
+import AllRooms from './pages/AllRooms';
 
 function App() {
 const isOwnerPath = useLocation().pathname.includes('/owner');
@@ -19,6 +20,7 @@ const isOwnerPath = useLocation().pathname.includes('/owner');
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<AboutUs />} />
             <Route path="/careers" element={<Careers />} />
+            <Route path="/rooms" element ={<AllRooms/>}/>
             <Route path="/contact" element={<ContactUs />} />
             <Route path="/privacy" element={<PrivacyPolicy />} />
             <Route path="/terms" element={<TermsOfService />} />
