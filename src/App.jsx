@@ -9,6 +9,10 @@ import TermsOfService from './pages/TermsOfService'
 import CookiePolicy from './pages/CookiePolicy'
 import Footer from './components/Footer'
 import AllRooms from './pages/AllRooms';
+import HotelDetail from "./pages/HotelDetail";
+
+
+
 
 function App() {
 const isOwnerPath = useLocation().pathname.includes('/owner');
@@ -21,6 +25,7 @@ const isOwnerPath = useLocation().pathname.includes('/owner');
             <Route path="/about" element={<AboutUs />} />
             <Route path="/careers" element={<Careers />} />
             <Route path="/rooms" element ={<AllRooms/>}/>
+            <Route path="/hotels/:hotelId" element={<HotelDetail />} />
             <Route path="/contact" element={<ContactUs />} />
             <Route path="/privacy" element={<PrivacyPolicy />} />
             <Route path="/terms" element={<TermsOfService />} />
