@@ -2,6 +2,16 @@ import { useNavigate } from "react-router-dom";
 import { roomsDummyData } from "../data/roomsDummyData";
 import stars from "../assets/stars.png";
 import location from "../assets/location.png";
+import {
+  FaWifi,
+  FaSwimmingPool,
+  FaParking,
+  FaUtensils,
+  FaSnowflake,
+  FaTv,
+  FaDumbbell,
+  FaCoffee,
+} from "react-icons/fa";
 
 // NOTE: currently using roomsDummyData below. Once your backend is ready,
 // swap this out for a real API call — something like:
@@ -17,6 +27,18 @@ import location from "../assets/location.png";
 // then replace `roomsDummyData` below with `rooms` — everything else in
 // this component (the JSX/markup) stays exactly the same, since the dummy
 // data shape already matches what the backend returns.
+
+// maps an amenity name (from either dummy data or the real backend) to an icon
+const amenityIcons = {
+  wifi: FaWifi,
+  "swimming pool": FaSwimmingPool,
+  parking: FaParking,
+  restaurant: FaUtensils,
+  "air conditioning": FaSnowflake,
+  tv: FaTv,
+  gym: FaDumbbell,
+  "breakfast included": FaCoffee,
+};
 
 const AllRooms = () => {
   const navigate = useNavigate();
@@ -65,6 +87,25 @@ const AllRooms = () => {
                   <img src={location} alt="Location Icon" className="w-4" />
                   <span>{room.hotel.address}</span>
                 </div>
+
+                {/* Amenities */}
+                {room.amenities?.length > 0 && (
+                  <div className="flex flex-wrap gap-3 mt-3">
+                    {room.amenities.map((amenity) => {
+                      const Icon = amenityIcons[amenity.toLowerCase()];
+                      return (
+                        <div
+                          key={amenity}
+                          className="flex items-center gap-2 px-3 py-1.5 bg-gray-100 rounded-full text-xs text-gray-600"
+                        >
+                          {Icon && <Icon className="w-3.5 h-3.5 text-emerald-600" />}
+                          <span>{amenity}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
                 <p className="text-emerald-600 font-semibold mt-2">
                   ${room.pricePerNight} / night
                 </p>
