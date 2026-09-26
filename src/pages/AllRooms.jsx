@@ -1,3 +1,4 @@
+import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { roomsDummyData } from "../data/roomsDummyData";
 import stars from "../assets/stars.png";
@@ -24,11 +25,10 @@ import {
 //     roomsAPI.getAllRooms().then((data) => setRooms(data.rooms || []));
 //   }, []);
 //
-// then replace `roomsDummyData` below with `rooms` — everything else in
-// this component (the JSX/markup) stays exactly the same, since the dummy
-// data shape already matches what the backend returns.
+// then replace `roomsDummyData` below with `rooms` — the filter logic below
+// reads room.roomType and room.pricePerNight, which the real backend
+// already returns in this exact shape, so nothing else needs to change.
 
-// maps an amenity name (from either dummy data or the real backend) to an icon
 const amenityIcons = {
   wifi: FaWifi,
   "swimming pool": FaSwimmingPool,
@@ -40,17 +40,88 @@ const amenityIcons = {
   "breakfast included": FaCoffee,
 };
 
+const roomTypeOptions = ["Single Bed", "Double Bed", "Luxury Room", "Family Suite"];
+
+const priceRangeOptions = [
+  { label: "$0 to $100", min: 0, max: 100 },
+  { label: "$100 to $200", min: 100, max: 200 },
+  { label: "$200 to $300", min: 200, max: 300 },
+  { label: "$300+", min: 300, max: Infinity },
+];
+
+const sortOptions = [
+  { label: "Price: Low to High", value: "price-asc" },
+  { label: "Price: High to Low", value: "price-desc" },
+  { label: "Newest First", value: "newest" },
+];
+
 const AllRooms = () => {
   const navigate = useNavigate();
+
+  const [selectedRoomTypes, setSelectedRoomTypes] = useState([]);
+  const [selectedPriceRanges, setSelectedPriceRanges] = useState([]);
+  const [sortBy, setSortBy] = useState("");
 
   const goToRoom = (roomId) => {
     navigate(`/rooms/${roomId}`);
     window.scrollTo(0, 0);
   };
 
+  const toggleRoomType = (type) => {
+    setSelectedRoomTypes((prev) =>
+      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
+    );
+  };
+
+  const togglePriceRange = (label) => {
+    setSelectedPriceRanges((prev) =>
+      prev.includes(label) ? prev.filter((l) => l !== label) : [...prev, label]
+    );
+  };
+
+  const clearFilters = () => {
+    setSelectedRoomTypes([]);
+    setSelectedPriceRanges([]);
+    setSortBy("");
+  };
+
+  const filteredRooms = useMemo(() => {
+    let result = [...roomsDummyData];
+
+    // Room Type filter — must-have because this is the primary way guests
+    // narrow down what kind of room they want (single/double/suite etc.)
+    if (selectedRoomTypes.length > 0) {
+      result = result.filter((room) => selectedRoomTypes.includes(room.roomType));
+    }
+
+    // Price Range filter — must-have, price is the #1 booking decision factor
+    if (selectedPriceRanges.length > 0) {
+      result = result.filter((room) => {
+        return selectedPriceRanges.some((label) => {
+          const range = priceRangeOptions.find((r) => r.label === label);
+          return room.pricePerNight >= range.min && room.pricePerNight < range.max;
+        });
+      });
+    }
+
+    // Sort — must-have, lets guests order by budget or recency
+    if (sortBy === "price-asc") {
+      result.sort((a, b) => a.pricePerNight - b.pricePerNight);
+    } else if (sortBy === "price-desc") {
+      result.sort((a, b) => b.pricePerNight - a.pricePerNight);
+    } else if (sortBy === "newest") {
+      result.reverse();
+    }
+
+    return result;
+  }, [selectedRoomTypes, selectedPriceRanges, sortBy]);
+
+  const hasActiveFilters =
+    selectedRoomTypes.length > 0 || selectedPriceRanges.length > 0 || sortBy;
+
   return (
     <div className="flex flex-col-reverse lg:flex-row items-start
-    justify-between pt-28 md:pt-35 px-4 md:px-16 lg:px-24">
+    justify-between pt-28 md:pt-35 px-4 md:px-16 lg:px-24 gap-10">
       <div className="w-full">
         <div className="flex flex-col items-start text-left mb-10">
           <h1 className="font-playfair text-4xl md:text-[40px]"> Hotel Rooms </h1>
@@ -60,8 +131,12 @@ const AllRooms = () => {
           </p>
         </div>
 
+        {filteredRooms.length === 0 && (
+          <p className="text-gray-500">No rooms match your filters.</p>
+        )}
+
         <div className="flex flex-col gap-8">
-          {roomsDummyData.map((room) => (
+          {filteredRooms.map((room) => (
             <div key={room._id} className="flex flex-col md:flex-row gap-6 border-b pb-8">
               <img
                 onClick={() => goToRoom(room._id)}
@@ -116,8 +191,70 @@ const AllRooms = () => {
       </div>
 
       {/* Filter */}
-      <div className="w-full lg:w-72 lg:sticky lg:top-28">
-        {/* filter UI goes here later — city, price range, amenities */}
+      <div className="w-full lg:w-72 lg:sticky lg:top-28 border border-gray-200 rounded-xl">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200">
+          <p className="text-base font-medium text-gray-800">FILTERS</p>
+          {hasActiveFilters && (
+            <button
+              onClick={clearFilters}
+              className="text-xs text-emerald-600 hover:underline"
+            >
+              CLEAR
+            </button>
+          )}
+        </div>
+
+        <div className="px-5 py-4 border-b border-gray-200">
+          <p className="font-medium text-gray-700 mb-3">Room Type</p>
+          <div className="flex flex-col gap-3">
+            {roomTypeOptions.map((type) => (
+              <label key={type} className="flex items-center gap-3 text-sm text-gray-600 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={selectedRoomTypes.includes(type)}
+                  onChange={() => toggleRoomType(type)}
+                  className="w-4 h-4 accent-emerald-500"
+                />
+                {type}
+              </label>
+            ))}
+          </div>
+        </div>
+
+        <div className="px-5 py-4 border-b border-gray-200">
+          <p className="font-medium text-gray-700 mb-3">Price Range</p>
+          <div className="flex flex-col gap-3">
+            {priceRangeOptions.map((range) => (
+              <label key={range.label} className="flex items-center gap-3 text-sm text-gray-600 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={selectedPriceRanges.includes(range.label)}
+                  onChange={() => togglePriceRange(range.label)}
+                  className="w-4 h-4 accent-emerald-500"
+                />
+                {range.label}
+              </label>
+            ))}
+          </div>
+        </div>
+
+        <div className="px-5 py-4">
+          <p className="font-medium text-gray-700 mb-3">Sort By</p>
+          <div className="flex flex-col gap-3">
+            {sortOptions.map((option) => (
+              <label key={option.value} className="flex items-center gap-3 text-sm text-gray-600 cursor-pointer">
+                <input
+                  type="radio"
+                  name="sortBy"
+                  checked={sortBy === option.value}
+                  onChange={() => setSortBy(option.value)}
+                  className="w-4 h-4 accent-emerald-500"
+                />
+                {option.label}
+              </label>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

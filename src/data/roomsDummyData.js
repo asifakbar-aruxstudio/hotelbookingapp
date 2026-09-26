@@ -6,6 +6,7 @@
 export const roomsDummyData = [
   {
     _id: "room001",
+    roomType: "Double Bed",
     pricePerNight: 120,
     amenities: ["WiFi", "Air Conditioning", "TV", "Breakfast Included"],
     images: [
@@ -21,6 +22,7 @@ export const roomsDummyData = [
   },
   {
     _id: "room002",
+    roomType: "Single Bed",
     pricePerNight: 85,
     amenities: ["WiFi", "Parking"],
     images: [
@@ -36,6 +38,7 @@ export const roomsDummyData = [
   },
   {
     _id: "room003",
+    roomType: "Single Bed",
     pricePerNight: 60,
     amenities: ["WiFi"],
     images: [
@@ -51,6 +54,7 @@ export const roomsDummyData = [
   },
   {
     _id: "room004",
+    roomType: "Luxury Room",
     pricePerNight: 200,
     amenities: ["WiFi", "Swimming Pool", "Gym", "Restaurant", "Air Conditioning"],
     images: [
