@@ -4,7 +4,7 @@ import logo from '../assets/logo.png';
 import search from '../assets/search.png';
 import menuicon from '../assets/menuicon.png';
 import close from '../assets/close.png';
-import { useClerk, useUser, UserButton } from '@clerk/react';
+import { useClerk, useUser, UserButton } from '@clerk/clerk-react';
 
 const BookingIcon = () => (
   <svg

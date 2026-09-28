@@ -6,6 +6,8 @@
 export const roomsDummyData = [
   {
     _id: "room001",
+    description: "A spacious double bed room with city views, a work desk, and a modern bathroom. Ideal for couples or business travellers.",
+    capacity: { adults: 2, children: 1 },
     roomType: "Double Bed",
     pricePerNight: 120,
     amenities: ["WiFi", "Air Conditioning", "TV", "Breakfast Included"],
@@ -22,6 +24,8 @@ export const roomsDummyData = [
   },
   {
     _id: "room002",
+    description: "A simple, clean single bed room close to the beach. Everything you need for a short, comfortable stay.",
+    capacity: { adults: 1, children: 0 },
     roomType: "Single Bed",
     pricePerNight: 85,
     amenities: ["WiFi", "Parking"],
@@ -38,6 +42,8 @@ export const roomsDummyData = [
   },
   {
     _id: "room003",
+    description: "A compact and affordable room in the city center, perfect for solo travellers on a budget.",
+    capacity: { adults: 1, children: 0 },
     roomType: "Single Bed",
     pricePerNight: 60,
     amenities: ["WiFi"],
@@ -54,6 +60,8 @@ export const roomsDummyData = [
   },
   {
     _id: "room004",
+    description: "A luxury room with premium furnishing, a private lounge area, and access to the pool and gym.",
+    capacity: { adults: 3, children: 2 },
     roomType: "Luxury Room",
     pricePerNight: 200,
     amenities: ["WiFi", "Swimming Pool", "Gym", "Restaurant", "Air Conditioning"],

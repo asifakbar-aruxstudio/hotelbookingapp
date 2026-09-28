@@ -10,6 +10,8 @@ import CookiePolicy from './pages/CookiePolicy'
 import Footer from './components/Footer'
 import AllRooms from './pages/AllRooms';
 import HotelDetail from "./pages/HotelDetail";
+import RoomDetails from "./pages/RoomDetails";
+
 
 
 
@@ -25,6 +27,7 @@ const isOwnerPath = useLocation().pathname.includes('/owner');
             <Route path="/about" element={<AboutUs />} />
             <Route path="/careers" element={<Careers />} />
             <Route path="/rooms" element ={<AllRooms/>}/>
+            <Route path="/rooms/:roomId" element={<RoomDetails />} />
             <Route path="/hotels/:hotelId" element={<HotelDetail />} />
             <Route path="/contact" element={<ContactUs />} />
             <Route path="/privacy" element={<PrivacyPolicy />} />
