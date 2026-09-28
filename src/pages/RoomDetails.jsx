@@ -13,6 +13,9 @@ import {
   FaTv,
   FaDumbbell,
   FaCoffee,
+  FaStar,
+  FaRegStar,
+  FaInfoCircle,
 } from "react-icons/fa";
 
 // NOTE: currently reading from roomsDummyData. Once your backend is ready,
@@ -26,6 +29,9 @@ import {
 //
 // and in handleBook, replace the console.log with:
 //   await bookingsAPI.createBooking({ roomId, checkInDate, checkOutDate, numberOfRooms: 1, guests: { adults: guests } });
+//
+// Reviews: later load them from the backend (GET /api/v1/reviews/hotel/:hotelId)
+// and post new ones with POST /api/v1/reviews. Until then they live in local state.
 
 const amenityIcons = {
   wifi: FaWifi,
@@ -40,10 +46,43 @@ const amenityIcons = {
 
 const BOOKING_CHARGE_PERCENT = 10; // platform booking charge, same as backend
 
+// sample reviews used until the backend Review API is connected
+const sampleReviews = [
+  {
+    id: "r1",
+    name: "Ahmed Khan",
+    rating: 5,
+    comment: "Very clean room and the staff was helpful. Check-in was quick and the bed was comfortable.",
+    date: "2026-08-12",
+  },
+  {
+    id: "r2",
+    name: "Sara Ali",
+    rating: 4,
+    comment: "Good location and value for money. WiFi could be a little faster, but overall a nice stay.",
+    date: "2026-07-28",
+  },
+  {
+    id: "r3",
+    name: "Bilal Raza",
+    rating: 4,
+    comment: "Nice room with a good view. Breakfast was decent. Would stay here again.",
+    date: "2026-07-05",
+  },
+];
+
+const StarRating = ({ value }) => (
+  <div className="flex items-center gap-0.5 text-amber-400">
+    {[1, 2, 3, 4, 5].map((n) =>
+      n <= value ? <FaStar key={n} className="w-4 h-4" /> : <FaRegStar key={n} className="w-4 h-4" />
+    )}
+  </div>
+);
+
 const RoomDetails = () => {
   const { roomId } = useParams();
   const navigate = useNavigate();
-  const { isSignedIn } = useUser();
+  const { isSignedIn, user } = useUser();
   const { openSignIn } = useClerk();
 
   const room = roomsDummyData.find((r) => r._id === roomId);
@@ -54,6 +93,11 @@ const RoomDetails = () => {
   const [guests, setGuests] = useState(1);
   const [message, setMessage] = useState("");
 
+  const [reviews, setReviews] = useState(sampleReviews);
+  const [newRating, setNewRating] = useState(5);
+  const [newComment, setNewComment] = useState("");
+  const [reviewMessage, setReviewMessage] = useState("");
+
   const today = new Date().toISOString().split("T")[0];
 
   const nights = useMemo(() => {
@@ -61,6 +105,11 @@ const RoomDetails = () => {
     const diff = (new Date(checkOut) - new Date(checkIn)) / (1000 * 60 * 60 * 24);
     return diff > 0 ? Math.ceil(diff) : 0;
   }, [checkIn, checkOut]);
+
+  const averageRating = useMemo(() => {
+    if (reviews.length === 0) return 0;
+    return (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1);
+  }, [reviews]);
 
   if (!room) {
     return (
@@ -73,6 +122,10 @@ const RoomDetails = () => {
   const roomPrice = nights * room.pricePerNight;
   const bookingCharge = +(roomPrice * BOOKING_CHARGE_PERCENT / 100).toFixed(2);
   const totalPrice = +(roomPrice + bookingCharge).toFixed(2);
+
+  const mapSrc = `https://www.google.com/maps?q=${encodeURIComponent(
+    `${room.hotel.name}, ${room.hotel.address}`
+  )}&output=embed`;
 
   const handleBook = (e) => {
     e.preventDefault();
@@ -109,6 +162,37 @@ const RoomDetails = () => {
     setMessage("Booking request created! (demo mode — backend not connected yet)");
   };
 
+  const handleReviewSubmit = (e) => {
+    e.preventDefault();
+    setReviewMessage("");
+
+    if (!isSignedIn) {
+      setReviewMessage("Please sign up first, then log in to leave a review.");
+      openSignIn();
+      return;
+    }
+
+    if (!newComment.trim()) {
+      setReviewMessage("Please write a comment before submitting.");
+      return;
+    }
+
+    // TODO: replace with a POST to /api/v1/reviews once backend is connected
+    setReviews((prev) => [
+      {
+        id: `r${Date.now()}`,
+        name: user?.fullName || user?.firstName || "Guest",
+        rating: newRating,
+        comment: newComment.trim(),
+        date: new Date().toISOString().split("T")[0],
+      },
+      ...prev,
+    ]);
+    setNewComment("");
+    setNewRating(5);
+    setReviewMessage("Thanks for your feedback!");
+  };
+
   return (
     <div className="pt-28 md:pt-35 px-4 md:px-16 lg:px-24 pb-16">
       {/* Header */}
@@ -119,7 +203,9 @@ const RoomDetails = () => {
         </h1>
         <div className="flex items-center">
           <img src={stars} alt="rating" className="w-24" />
-          <p className="ml-2 text-sm text-gray-600">{room.hotel.totalReviews}+ Reviews</p>
+          <p className="ml-2 text-sm text-gray-600">
+            {averageRating} · {reviews.length} Reviews
+          </p>
         </div>
         <div className="flex items-center gap-2 text-gray-500 text-sm">
           <img src={location} alt="Location Icon" className="w-4" />
@@ -248,6 +334,94 @@ const RoomDetails = () => {
       )}
 
       {message && <p className="mt-4 text-sm text-emerald-700">{message}</p>}
+
+      {/* Google Map */}
+      <div className="mt-12">
+        <h2 className="font-playfair text-2xl text-gray-800 mb-3">Location</h2>
+        <p className="text-sm text-gray-500 mb-3">{room.hotel.address}</p>
+        <iframe
+          title={`${room.hotel.name} location`}
+          src={mapSrc}
+          className="w-full h-72 md:h-96 rounded-xl border-0 shadow-lg"
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+          allowFullScreen
+        />
+      </div>
+
+      {/* Customer reviews */}
+      <div className="mt-12">
+        <div className="flex items-center gap-3 mb-4">
+          <h2 className="font-playfair text-2xl text-gray-800">Guest Reviews</h2>
+          <div className="flex items-center gap-2 text-sm text-gray-600">
+            <FaStar className="text-amber-400" />
+            <span>{averageRating} ({reviews.length} reviews)</span>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-4 max-w-3xl">
+          {reviews.map((review) => (
+            <div key={review.id} className="border rounded-xl p-4">
+              <div className="flex items-center justify-between">
+                <p className="font-medium text-gray-800">{review.name}</p>
+                <p className="text-xs text-gray-400">{review.date}</p>
+              </div>
+              <StarRating value={review.rating} />
+              <p className="text-sm text-gray-600 mt-2">{review.comment}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Add a review */}
+        <form
+          onSubmit={handleReviewSubmit}
+          className="mt-6 max-w-3xl border rounded-xl p-5 flex flex-col gap-3"
+        >
+          <p className="font-medium text-gray-800">Share your experience</p>
+          <div className="flex items-center gap-3">
+            <label className="text-sm text-gray-600">Rating</label>
+            <select
+              value={newRating}
+              onChange={(e) => setNewRating(Number(e.target.value))}
+              className="border border-gray-300 rounded px-3 py-1.5 outline-none text-sm"
+            >
+              {[5, 4, 3, 2, 1].map((n) => (
+                <option key={n} value={n}>
+                  {n} {n === 1 ? "star" : "stars"}
+                </option>
+              ))}
+            </select>
+          </div>
+          <textarea
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            placeholder="Write your comment about this room..."
+            rows={3}
+            className="border border-gray-300 rounded px-3 py-2 outline-none text-sm resize-none"
+          />
+          <button
+            type="submit"
+            className="self-start px-6 py-2 bg-emerald-500 text-white rounded-full text-sm hover:bg-emerald-600 transition-colors"
+          >
+            Submit Review
+          </button>
+          {reviewMessage && <p className="text-sm text-emerald-700">{reviewMessage}</p>}
+        </form>
+      </div>
+
+      {/* Common message at the bottom (edit the text to match your real policies) */}
+      <div className="mt-12 flex gap-3 bg-emerald-50 border border-emerald-200 rounded-xl p-5 max-w-3xl">
+        <FaInfoCircle className="text-emerald-600 w-5 h-5 mt-0.5 shrink-0" />
+        <div className="text-sm text-gray-700">
+          <p className="font-medium text-gray-800 mb-1">Important Information</p>
+          <ul className="list-disc pl-5 flex flex-col gap-1">
+            <li>Please sign up and log in before booking a room.</li>
+            <li>A valid ID is required at check-in.</li>
+            <li>A {BOOKING_CHARGE_PERCENT}% booking charge is added to every booking.</li>
+            <li>The rest of the payment goes directly to the hotel.</li>
+          </ul>
+        </div>
+      </div>
 
       <button
         onClick={() => navigate(-1)}
