@@ -11,6 +11,8 @@ import Footer from './components/Footer'
 import AllRooms from './pages/AllRooms';
 import HotelDetail from "./pages/HotelDetail";
 import RoomDetails from "./pages/RoomDetails";
+import MyBookings from "./pages/MyBookings";
+
 
 
 
@@ -28,6 +30,7 @@ const isOwnerPath = useLocation().pathname.includes('/owner');
             <Route path="/careers" element={<Careers />} />
             <Route path="/rooms" element ={<AllRooms/>}/>
             <Route path="/rooms/:roomId" element={<RoomDetails />} />
+            <Route path="/my-bookings" element={<MyBookings />} />
             <Route path="/hotels/:hotelId" element={<HotelDetail />} />
             <Route path="/contact" element={<ContactUs />} />
             <Route path="/privacy" element={<PrivacyPolicy />} />

@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useUser, useClerk } from "@clerk/clerk-react";
 import { roomsDummyData } from "../data/roomsDummyData";
+import { addBooking } from "../data/Bookingsdummydata";
 import stars from "../assets/stars.png";
 import location from "../assets/location.png";
 import {
@@ -16,6 +17,9 @@ import {
   FaStar,
   FaRegStar,
   FaInfoCircle,
+  FaPhoneAlt,
+  FaWhatsapp,
+  FaEnvelope,
 } from "react-icons/fa";
 
 // NOTE: currently reading from roomsDummyData. Once your backend is ready,
@@ -27,8 +31,13 @@ import {
 //   const [room, setRoom] = useState(null);
 //   useEffect(() => { roomsAPI.getRoomById(roomId).then(setRoom); }, [roomId]);
 //
-// and in handleBook, replace the console.log with:
+// and in handleBook, replace the addBooking(...) call with:
 //   await bookingsAPI.createBooking({ roomId, checkInDate, checkOutDate, numberOfRooms: 1, guests: { adults: guests } });
+//
+// Owner: the backend's Hotel has an `owner` field (a User with fullName, email,
+// phone, avatar). getHotelById already populates it, so once connected,
+// room.hotel.owner will be filled automatically and the sample owner below
+// won't be used.
 //
 // Reviews: later load them from the backend (GET /api/v1/reviews/hotel/:hotelId)
 // and post new ones with POST /api/v1/reviews. Until then they live in local state.
@@ -46,11 +55,20 @@ const amenityIcons = {
 
 const BOOKING_CHARGE_PERCENT = 10; // platform booking charge, same as backend
 
+// used only when room.hotel.owner is missing (dummy data phase)
+const sampleOwner = {
+  fullName: "Hotel Owner",
+  avatar: "https://i.pravatar.cc/200?img=12",
+  email: "owner@example.com",
+  phone: "+92 300 1234567",
+};
+
 // sample reviews used until the backend Review API is connected
 const sampleReviews = [
   {
     id: "r1",
     name: "Ahmed Khan",
+    avatar: "https://i.pravatar.cc/100?img=33",
     rating: 5,
     comment: "Very clean room and the staff was helpful. Check-in was quick and the bed was comfortable.",
     date: "2026-08-12",
@@ -58,6 +76,7 @@ const sampleReviews = [
   {
     id: "r2",
     name: "Sara Ali",
+    avatar: "https://i.pravatar.cc/100?img=47",
     rating: 4,
     comment: "Good location and value for money. WiFi could be a little faster, but overall a nice stay.",
     date: "2026-07-28",
@@ -65,11 +84,32 @@ const sampleReviews = [
   {
     id: "r3",
     name: "Bilal Raza",
+    avatar: "https://i.pravatar.cc/100?img=15",
     rating: 4,
     comment: "Nice room with a good view. Breakfast was decent. Would stay here again.",
     date: "2026-07-05",
   },
 ];
+
+// shows the profile picture, or the person's initials if there is no image
+const Avatar = ({ src, name = "?", size = "w-10 h-10", text = "text-sm" }) => {
+  const initials = name
+    .split(" ")
+    .map((part) => part[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+
+  return src ? (
+    <img src={src} alt={name} className={`${size} rounded-full object-cover shrink-0`} />
+  ) : (
+    <div
+      className={`${size} ${text} rounded-full bg-emerald-100 text-emerald-700 font-medium flex items-center justify-center shrink-0`}
+    >
+      {initials}
+    </div>
+  );
+};
 
 const StarRating = ({ value }) => (
   <div className="flex items-center gap-0.5 text-amber-400">
@@ -119,6 +159,9 @@ const RoomDetails = () => {
     );
   }
 
+  const owner = room.hotel.owner || sampleOwner;
+  const whatsappNumber = (owner.phone || "").replace(/\D/g, "");
+
   const roomPrice = nights * room.pricePerNight;
   const bookingCharge = +(roomPrice * BOOKING_CHARGE_PERCENT / 100).toFixed(2);
   const totalPrice = +(roomPrice + bookingCharge).toFixed(2);
@@ -150,16 +193,33 @@ const RoomDetails = () => {
     }
 
     // TODO: replace with bookingsAPI.createBooking(...) once backend is connected
-    console.log("Booking request:", {
-      roomId: room._id,
+    addBooking({
+      _id: `b${Date.now()}`,
+      customerId: user.id,
+      user: {
+        fullName: user.fullName || user.firstName || "Guest",
+        email: user.primaryEmailAddress?.emailAddress || "",
+        avatar: user.imageUrl,
+      },
+      hotel: {
+        _id: room.hotel._id,
+        ownerId: room.hotel.owner?.id || "demo",
+        name: room.hotel.name,
+        city: room.hotel.city,
+        address: room.hotel.address,
+      },
+      room: { _id: room._id, roomType: room.roomType, images: room.images },
       checkInDate: checkIn,
       checkOutDate: checkOut,
+      numberOfRooms: 1,
       guests,
       roomPrice,
       bookingCharge,
       totalPrice,
+      status: "pending",
+      paymentStatus: "unpaid",
     });
-    setMessage("Booking request created! (demo mode — backend not connected yet)");
+    setMessage("Booking created! You can see it in My Bookings.");
   };
 
   const handleReviewSubmit = (e) => {
@@ -182,6 +242,7 @@ const RoomDetails = () => {
       {
         id: `r${Date.now()}`,
         name: user?.fullName || user?.firstName || "Guest",
+        avatar: user?.imageUrl, // customer's own Clerk profile picture
         rating: newRating,
         comment: newComment.trim(),
         date: new Date().toISOString().split("T")[0],
@@ -238,6 +299,15 @@ const RoomDetails = () => {
       {/* Info + price */}
       <div className="flex flex-col md:flex-row md:justify-between gap-6 mt-10">
         <div className="max-w-2xl">
+          {/* Hosted by (hotel owner) */}
+          <div className="flex items-center gap-3 mb-6">
+            <Avatar src={owner.avatar} name={owner.fullName} size="w-14 h-14" text="text-lg" />
+            <div>
+              <p className="text-xs text-gray-500">Hosted by</p>
+              <p className="font-medium text-gray-800">{owner.fullName}</p>
+            </div>
+          </div>
+
           <h2 className="font-playfair text-2xl text-gray-800 mb-2">About this room</h2>
           <p className="text-gray-600 leading-relaxed">{room.description}</p>
           <p className="text-sm text-gray-500 mt-3">
@@ -361,13 +431,16 @@ const RoomDetails = () => {
 
         <div className="flex flex-col gap-4 max-w-3xl">
           {reviews.map((review) => (
-            <div key={review.id} className="border rounded-xl p-4">
-              <div className="flex items-center justify-between">
-                <p className="font-medium text-gray-800">{review.name}</p>
-                <p className="text-xs text-gray-400">{review.date}</p>
+            <div key={review.id} className="border rounded-xl p-4 flex gap-3">
+              <Avatar src={review.avatar} name={review.name} />
+              <div className="flex-1">
+                <div className="flex items-center justify-between">
+                  <p className="font-medium text-gray-800">{review.name}</p>
+                  <p className="text-xs text-gray-400">{review.date}</p>
+                </div>
+                <StarRating value={review.rating} />
+                <p className="text-sm text-gray-600 mt-2">{review.comment}</p>
               </div>
-              <StarRating value={review.rating} />
-              <p className="text-sm text-gray-600 mt-2">{review.comment}</p>
             </div>
           ))}
         </div>
@@ -377,7 +450,15 @@ const RoomDetails = () => {
           onSubmit={handleReviewSubmit}
           className="mt-6 max-w-3xl border rounded-xl p-5 flex flex-col gap-3"
         >
-          <p className="font-medium text-gray-800">Share your experience</p>
+          <div className="flex items-center gap-3">
+            {isSignedIn && (
+              <Avatar
+                src={user?.imageUrl}
+                name={user?.fullName || user?.firstName || "Guest"}
+              />
+            )}
+            <p className="font-medium text-gray-800">Share your experience</p>
+          </div>
           <div className="flex items-center gap-3">
             <label className="text-sm text-gray-600">Rating</label>
             <select
@@ -420,6 +501,48 @@ const RoomDetails = () => {
             <li>A {BOOKING_CHARGE_PERCENT}% booking charge is added to every booking.</li>
             <li>The rest of the payment goes directly to the hotel.</li>
           </ul>
+        </div>
+      </div>
+
+      {/* Contact section */}
+      <div className="mt-12 max-w-3xl border rounded-xl p-6">
+        <h2 className="font-playfair text-2xl text-gray-800 mb-4">Contact the Hotel</h2>
+        <div className="flex items-center gap-4">
+          <Avatar src={owner.avatar} name={owner.fullName} size="w-16 h-16" text="text-xl" />
+          <div>
+            <p className="font-medium text-gray-800">{owner.fullName}</p>
+            <p className="text-sm text-gray-500">{room.hotel.name}</p>
+            <p className="text-sm text-gray-500">{room.hotel.address}</p>
+          </div>
+        </div>
+
+        <div className="flex flex-wrap gap-3 mt-5">
+          {owner.phone && (
+            <a
+              href={`tel:${owner.phone}`}
+              className="flex items-center gap-2 px-5 py-2 bg-emerald-500 text-white rounded-full text-sm hover:bg-emerald-600 transition-colors"
+            >
+              <FaPhoneAlt className="w-3.5 h-3.5" /> Call
+            </a>
+          )}
+          {whatsappNumber && (
+            <a
+              href={`https://wa.me/${whatsappNumber}`}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center gap-2 px-5 py-2 bg-green-500 text-white rounded-full text-sm hover:bg-green-600 transition-colors"
+            >
+              <FaWhatsapp className="w-4 h-4" /> WhatsApp
+            </a>
+          )}
+          {owner.email && (
+            <a
+              href={`mailto:${owner.email}`}
+              className="flex items-center gap-2 px-5 py-2 border border-gray-300 text-gray-700 rounded-full text-sm hover:bg-gray-50 transition-colors"
+            >
+              <FaEnvelope className="w-3.5 h-3.5" /> Email
+            </a>
+          )}
         </div>
       </div>
 
