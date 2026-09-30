@@ -12,6 +12,7 @@ import AllRooms from './pages/AllRooms';
 import HotelDetail from "./pages/HotelDetail";
 import RoomDetails from "./pages/RoomDetails";
 import MyBookings from "./pages/MyBookings";
+import HotelReg from './components/HotelReg';
 
 
 
@@ -23,6 +24,7 @@ const isOwnerPath = useLocation().pathname.includes('/owner');
   return (
     <>
      {!isOwnerPath && <Navbar />}
+     <HotelReg/>
        <div className ='min-h-[70vh]' > 
         <Routes>
             <Route path="/" element={<Home />} />
