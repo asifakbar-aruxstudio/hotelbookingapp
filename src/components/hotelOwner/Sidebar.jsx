@@ -43,9 +43,9 @@ const Sidebar = () => {
       {/* Collapse Toggle */}
       <button
         onClick={() => setCollapsed(!collapsed)}
-        className="absolute -right-3 top-20 bg-yellow-500 hover:bg-yellow-400 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-md transition"
-        aria-label="Toggle sidebar"
-      >
+        className="absolute -right-3 top-20 bg-green-500 hover:bg-green-600 
+        text-white rounded-full w-6 h-6 flex items-center justify-center shadow-md transition"
+        aria-label="Toggle sidebar">
         <i className={`fa-solid ${collapsed ? "fa-chevron-right" : "fa-chevron-left"} text-xs`}></i>
       </button>
 
