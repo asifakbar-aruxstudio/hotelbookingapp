@@ -1,1185 +1,561 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useUser, useClerk } from "@clerk/clerk-react";
 import {
-  ArrowLeft,
-  ArrowRight,
-  Check,
-  Hotel,
-  User,
-  MapPin,
-  Building2,
-  ShieldCheck,
-  Eye,
-  EyeOff,
-} from "lucide-react";
+  FaTimes,
+  FaArrowLeft,
+  FaArrowRight,
+  FaCheckCircle,
+  FaWifi,
+  FaSwimmingPool,
+  FaParking,
+  FaUtensils,
+  FaSnowflake,
+  FaTv,
+  FaDumbbell,
+  FaCoffee,
+  FaCloudUploadAlt,
+  FaLock,
+  FaCreditCard,
+} from "react-icons/fa";
 
-const steps = [
-  {
-    title: "Owner Information",
-    icon: User,
-  },
-  {
-    title: "Hotel Information",
-    icon: Hotel,
-  },
-  {
-    title: "Location",
-    icon: MapPin,
-  },
-  {
-    title: "Hotel Details",
-    icon: Building2,
-  },
-  {
-    title: "Verification",
-    icon: ShieldCheck,
-  },
-  {
-    title: "Review",
-    icon: Check,
-  },
+// Side image — using an online Unsplash photo so no local asset file is needed.
+// Swap this for your own hosted image any time.
+const regImage =
+  "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80";
+
+// NOTE: this is a MODAL — render it only when open, e.g. from your Navbar:
+//
+//   const [showHotelReg, setShowHotelReg] = useState(false);
+//   {showHotelReg && <HotelReg onClose={() => setShowHotelReg(false)} />}
+//
+// Backend switch (replaces the dummy submit in handleSubmit):
+//
+//   import { hotelsAPI } from "../api";
+//
+//   const newHotel = await hotelsAPI.createHotel(
+//     { name, description, address, city, country, phone, amenities: selectedAmenities },
+//     imageFiles // array of File objects — registerHotel on the backend
+//                // uploads these to Cloudinary via Multer automatically
+//   );
+//   // the hotel is created as unapproved/unpaid — send the owner to pay
+//   // the $5000 registration fee next, e.g.:
+//   // navigate(`/owner/pay-registration/${newHotel._id}`);
+
+const amenityOptions = [
+  { label: "WiFi", icon: FaWifi },
+  { label: "Swimming Pool", icon: FaSwimmingPool },
+  { label: "Parking", icon: FaParking },
+  { label: "Restaurant", icon: FaUtensils },
+  { label: "Air Conditioning", icon: FaSnowflake },
+  { label: "TV", icon: FaTv },
+  { label: "Gym", icon: FaDumbbell },
+  { label: "Breakfast Included", icon: FaCoffee },
 ];
 
-const HotelReg = () => {
-  const [currentStep, setCurrentStep] = useState(0);
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+const steps = ["Basic Info", "Location", "Amenities", "Photos", "Review", "Payment"];
 
+const REGISTRATION_FEE = 5000;
+
+const HotelReg = ({ onClose }) => {
+  const { isSignedIn } = useUser();
+  const { openSignIn } = useClerk();
+  const navigate = useNavigate();
+
+  const [cardDetails, setCardDetails] = useState({ cardNumber: "", expiry: "", cvv: "", nameOnCard: "" });
+
+  const [step, setStep] = useState(0);
   const [formData, setFormData] = useState({
-    // Owner
-    ownerName: "",
-    email: "",
+    name: "",
     phone: "",
-    password: "",
-    confirmPassword: "",
-
-    // Hotel
-    hotelName: "",
-    hotelType: "",
+    email: "",
     description: "",
-
-    // Location
-    country: "Pakistan",
-    province: "",
-    city: "",
     address: "",
-    postalCode: "",
-
-    // Details
-    rooms: "",
-    checkIn: "14:00",
-    checkOut: "12:00",
-    facilities: [],
-
-    // Verification
-    cnic: "",
-    businessEmail: "",
-    website: "",
-    terms: false,
+    city: "",
+    country: "",
   });
+  const [selectedAmenities, setSelectedAmenities] = useState([]);
+  const [imageFiles, setImageFiles] = useState([]);
+  const [imagePreviews, setImagePreviews] = useState([]);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
 
-  const [errors, setErrors] = useState({});
-
-  const provinces = {
-    Sindh: [
-      "Karachi",
-      "Hyderabad",
-      "Sukkur",
-      "Larkana",
-      "Nawabshah",
-      "Mirpurkhas",
-      "Thatta",
-      "Jacobabad",
-    ],
-    Punjab: [
-      "Lahore",
-      "Rawalpindi",
-      "Faisalabad",
-      "Multan",
-      "Gujranwala",
-      "Sialkot",
-      "Bahawalpur",
-    ],
-    "Khyber Pakhtunkhwa": [
-      "Peshawar",
-      "Abbottabad",
-      "Mardan",
-      "Swat",
-      "Kohat",
-      "Dera Ismail Khan",
-    ],
-    Balochistan: [
-      "Quetta",
-      "Gwadar",
-      "Turbat",
-      "Khuzdar",
-      "Chaman",
-    ],
-    "Islamabad Capital Territory": ["Islamabad"],
-    "Gilgit-Baltistan": [
-      "Gilgit",
-      "Skardu",
-      "Hunza",
-    ],
-    "Azad Kashmir": [
-      "Muzaffarabad",
-      "Mirpur",
-      "Rawalakot",
-    ],
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const facilityOptions = [
-    "Free WiFi",
-    "Free Parking",
-    "Swimming Pool",
-    "Restaurant",
-    "Room Service",
-    "Air Conditioning",
-    "Gym",
-    "Spa",
-    "Airport Shuttle",
-    "24/7 Reception",
-  ];
-
-  const updateField = (field, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-
-    setErrors((prev) => ({
-      ...prev,
-      [field]: "",
-    }));
+  const toggleAmenity = (label) => {
+    setSelectedAmenities((prev) =>
+      prev.includes(label) ? prev.filter((a) => a !== label) : [...prev, label]
+    );
   };
 
-  const toggleFacility = (facility) => {
-    setFormData((prev) => {
-      const exists = prev.facilities.includes(facility);
-
-      return {
-        ...prev,
-        facilities: exists
-          ? prev.facilities.filter((item) => item !== facility)
-          : [...prev.facilities, facility],
-      };
-    });
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files).slice(0, 5); // max 5 images
+    setImageFiles(files);
+    setImagePreviews(files.map((file) => URL.createObjectURL(file)));
   };
 
+  const removeImage = (idx) => {
+    setImageFiles((prev) => prev.filter((_, i) => i !== idx));
+    setImagePreviews((prev) => prev.filter((_, i) => i !== idx));
+  };
+
+  // what each step requires before "Next" is allowed
   const validateStep = () => {
-    const newErrors = {};
-
-    if (currentStep === 0) {
-      if (!formData.ownerName.trim()) {
-        newErrors.ownerName = "Owner name is required";
-      }
-
-      if (!formData.email.trim()) {
-        newErrors.email = "Email is required";
-      } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-        newErrors.email = "Enter a valid email";
-      }
-
-      if (!formData.phone.trim()) {
-        newErrors.phone = "Phone number is required";
-      }
-
-      if (!formData.password) {
-        newErrors.password = "Password is required";
-      } else if (formData.password.length < 8) {
-        newErrors.password = "Password must be at least 8 characters";
-      }
-
-      if (formData.password !== formData.confirmPassword) {
-        newErrors.confirmPassword = "Passwords do not match";
-      }
+    setError("");
+    if (step === 0 && (!formData.name.trim() || !formData.phone.trim())) {
+      setError("Hotel name and phone number are required.");
+      return false;
     }
-
-    if (currentStep === 1) {
-      if (!formData.hotelName.trim()) {
-        newErrors.hotelName = "Hotel name is required";
-      }
-
-      if (!formData.hotelType) {
-        newErrors.hotelType = "Select hotel type";
-      }
-
-      if (!formData.description.trim()) {
-        newErrors.description = "Hotel description is required";
-      }
+    if (step === 1 && (!formData.address.trim() || !formData.city.trim() || !formData.country.trim())) {
+      setError("Address, city, and country are required.");
+      return false;
     }
-
-    if (currentStep === 2) {
-      if (!formData.province) {
-        newErrors.province = "Select province";
-      }
-
-      if (!formData.city) {
-        newErrors.city = "Select city";
-      }
-
-      if (!formData.address.trim()) {
-        newErrors.address = "Hotel address is required";
-      }
+    if (step === 3 && imageFiles.length === 0) {
+      setError("Please upload at least one hotel image.");
+      return false;
     }
-
-    if (currentStep === 3) {
-      if (!formData.rooms) {
-        newErrors.rooms = "Enter number of rooms";
-      }
-
-      if (formData.facilities.length === 0) {
-        newErrors.facilities = "Select at least one facility";
-      }
-    }
-
-    if (currentStep === 4) {
-      if (!formData.cnic.trim()) {
-        newErrors.cnic = "CNIC / ID number is required";
-      }
-
-      if (!formData.businessEmail.trim()) {
-        newErrors.businessEmail = "Business email is required";
-      }
-
-      if (!formData.terms) {
-        newErrors.terms =
-          "You must agree to Hotelify terms and conditions";
-      }
-    }
-
-    setErrors(newErrors);
-
-    return Object.keys(newErrors).length === 0;
+    return true;
   };
 
-  const handleNext = () => {
+  const goNext = () => {
+    if (!isSignedIn) {
+      setError("Please sign up and log in before registering a hotel.");
+      openSignIn();
+      return;
+    }
     if (!validateStep()) return;
+    setStep((s) => Math.min(s + 1, steps.length - 1));
+  };
 
-    if (currentStep < steps.length - 1) {
-      setCurrentStep((prev) => prev + 1);
-      window.scrollTo({ top: 0, behavior: "smooth" });
+  const goBack = () => {
+    setError("");
+    setStep((s) => Math.max(s - 1, 0));
+  };
+
+  const handlePayAndSubmit = async () => {
+    setError("");
+
+    if (
+      !cardDetails.nameOnCard.trim() ||
+      cardDetails.cardNumber.replace(/\s/g, "").length < 12 ||
+      !cardDetails.expiry.trim() ||
+      cardDetails.cvv.trim().length < 3
+    ) {
+      setError("Please fill in valid card details to complete the $" + REGISTRATION_FEE + " payment.");
+      return;
     }
-  };
 
-  const handleBack = () => {
-    if (currentStep > 0) {
-      setCurrentStep((prev) => prev - 1);
-      window.scrollTo({ top: 0, behavior: "smooth" });
+    setLoading(true);
+    try {
+      // TODO — real flow once backend is connected:
+      // 1) create the hotel:
+      //    const hotel = await hotelsAPI.createHotel(
+      //      { ...formData, amenities: selectedAmenities }, imageFiles
+      //    );
+      // 2) charge the registration fee through your payment gateway (Stripe/PayPal),
+      //    then record it:
+      //    await paymentsAPI.payHotelRegistrationFee({
+      //      hotelId: hotel._id, paymentGateway: "stripe", transactionId: <from gateway>,
+      //    });
+      await new Promise((resolve) => setTimeout(resolve, 1200)); // demo delay
+      console.log("Hotel registration + payment submitted:", {
+        ...formData,
+        amenities: selectedAmenities,
+        images: imageFiles.map((f) => f.name),
+        registrationFee: REGISTRATION_FEE,
+        transactionId: `demo_txn_${Date.now()}`,
+      });
+
+      setSuccess(true);
+      setTimeout(() => {
+        onClose?.();
+        navigate("/owner/dashboard");
+      }, 1500);
+    } catch (err) {
+      setError(err.message || "Payment failed. Please try again.");
+    } finally {
+      setLoading(false);
     }
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    if (!validateStep()) return;
-
-    console.log("Hotel Registration Data:", formData);
-
-    alert(
-      "Hotel registration submitted successfully! Backend will be connected next."
-    );
-  };
-
-  const inputClass = (field) =>
-    `w-full rounded-xl border ${
-      errors[field]
-        ? "border-red-400 bg-red-50"
-        : "border-gray-200 bg-gray-50"
-    } px-4 py-3.5 text-sm outline-none transition focus:border-[#00987e] focus:bg-white focus:ring-4 focus:ring-[#00987e]/10`;
-
-  const renderError = (field) => {
-    if (!errors[field]) return null;
-
-    return (
-      <p className="mt-1.5 text-xs text-red-500">
-        {errors[field]}
-      </p>
-    );
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50/40 px-4 py-8 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-6xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
+      <div className="relative w-full max-w-3xl bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row max-h-[90vh]">
+        {/* Close button */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center rounded-full bg-white/90 hover:bg-gray-100 transition-colors shadow"
+          aria-label="Close"
+        >
+          <FaTimes className="w-4 h-4 text-gray-600" />
+        </button>
 
-        {/* Header */}
-        <div className="mb-8 text-center">
-          <div className="mb-4 inline-flex items-center gap-2">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#00987e] text-white shadow-lg shadow-[#00987e]/20">
-              <Hotel size={23} />
-            </div>
-
-            <span className="text-2xl font-bold tracking-tight text-slate-800">
-              Hotel<span className="text-[#00987e]">ify</span>
-            </span>
+        {/* Side image */}
+        <div className="hidden md:block w-2/5 relative">
+          <img src={regImage} alt="Register your hotel" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-black/30 flex items-end p-6">
+            <p className="text-white font-playfair text-xl leading-snug">
+              List your hotel and start earning with Hotelify.
+            </p>
           </div>
-
-          <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl">
-            Register Your Hotel
-          </h1>
-
-          <p className="mx-auto mt-2 max-w-xl text-sm text-slate-500 sm:text-base">
-            Join Hotelify and manage your hotel, rooms and bookings
-            from one powerful dashboard.
-          </p>
         </div>
 
-        <div className="grid overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-slate-200/50 lg:grid-cols-[280px_1fr]">
-
-          {/* Sidebar */}
-          <aside className="hidden bg-slate-900 p-7 lg:block">
-            <div className="sticky top-8">
-              <p className="mb-7 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
-                Registration
+        {/* Form side */}
+        <div className="w-full md:w-3/5 p-6 md:p-8 overflow-y-auto">
+          {success ? (
+            <div className="h-full flex flex-col items-center justify-center text-center gap-3 py-10">
+              <FaCheckCircle className="w-12 h-12 text-emerald-500" />
+              <h2 className="font-playfair text-2xl text-gray-800">Payment received!</h2>
+              <p className="text-gray-500 max-w-xs">
+                Your hotel has been registered. Taking you to your dashboard — it will go live
+                once an admin reviews and approves it.
+              </p>
+            </div>
+          ) : (
+            <>
+              <h2 className="font-playfair text-2xl text-gray-800 mb-1">Register Your Hotel</h2>
+              <p className="text-sm text-gray-500 mb-5">
+                A one-time $5000 registration fee applies before your listing goes live.
               </p>
 
-              <div className="space-y-1">
-                {steps.map((step, index) => {
-                  const Icon = step.icon;
-                  const active = index === currentStep;
-                  const completed = index < currentStep;
-
-                  return (
-                    <div
-                      key={step.title}
-                      className={`relative flex items-center gap-3 rounded-xl px-3 py-3 transition ${
-                        active
-                          ? "bg-white/10 text-white"
-                          : completed
-                          ? "text-emerald-400"
-                          : "text-slate-500"
-                      }`}
-                    >
+              {/* Step indicator */}
+              <div className="flex items-center gap-1 mb-6">
+                {steps.map((label, idx) => (
+                  <div key={label} className="flex items-center flex-1 last:flex-none">
+                    <div className="flex flex-col items-center gap-1">
                       <div
-                        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full border ${
-                          active
-                            ? "border-[#00987e] bg-[#00987e] text-white"
-                            : completed
-                            ? "border-emerald-500 bg-emerald-500/10"
-                            : "border-slate-700"
+                        className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-medium transition-colors ${
+                          idx < step
+                            ? "bg-emerald-500 text-white"
+                            : idx === step
+                            ? "bg-emerald-500 text-white ring-4 ring-emerald-100"
+                            : "bg-gray-100 text-gray-400"
                         }`}
                       >
-                        {completed ? (
-                          <Check size={17} />
-                        ) : (
-                          <Icon size={17} />
-                        )}
+                        {idx < step ? <FaCheckCircle className="w-3.5 h-3.5" /> : idx + 1}
                       </div>
-
-                      <div>
-                        <p className="text-xs text-slate-500">
-                          Step {index + 1}
-                        </p>
-
-                        <p className="text-sm font-medium">
-                          {step.title}
-                        </p>
-                      </div>
+                      <span
+                        className={`hidden sm:block text-[10px] ${
+                          idx === step ? "text-emerald-600 font-medium" : "text-gray-400"
+                        }`}
+                      >
+                        {label}
+                      </span>
                     </div>
-                  );
-                })}
+                    {idx < steps.length - 1 && (
+                      <div
+                        className={`flex-1 h-0.5 mx-1 ${idx < step ? "bg-emerald-500" : "bg-gray-200"}`}
+                      />
+                    )}
+                  </div>
+                ))}
               </div>
 
-              <div className="mt-10 rounded-2xl border border-slate-700 bg-slate-800 p-5">
-                <p className="text-sm font-semibold text-white">
-                  Why join Hotelify?
-                </p>
+              {error && <p className="text-sm text-red-500 mb-4">{error}</p>}
 
-                <ul className="mt-3 space-y-2 text-xs leading-5 text-slate-400">
-                  <li>✓ Manage rooms easily</li>
-                  <li>✓ Receive online bookings</li>
-                  <li>✓ Track your earnings</li>
-                  <li>✓ Professional hotel profile</li>
-                </ul>
-              </div>
-            </div>
-          </aside>
-
-          {/* Main Form */}
-          <main className="p-5 sm:p-8 lg:p-10">
-
-            {/* Mobile Progress */}
-            <div className="mb-7 lg:hidden">
-              <div className="mb-3 flex items-center justify-between">
-                <span className="text-sm font-semibold text-slate-800">
-                  Step {currentStep + 1} of {steps.length}
-                </span>
-
-                <span className="text-sm text-slate-500">
-                  {steps[currentStep].title}
-                </span>
-              </div>
-
-              <div className="h-2 overflow-hidden rounded-full bg-slate-100">
-                <div
-                  className="h-full rounded-full bg-[#00987e] transition-all duration-500"
-                  style={{
-                    width: `${
-                      ((currentStep + 1) / steps.length) * 100
-                    }%`,
-                  }}
-                />
-              </div>
-            </div>
-
-            <form onSubmit={handleSubmit}>
-
-              {/* STEP 1 */}
-              {currentStep === 0 && (
-                <section>
-                  <StepHeading
-                    number="01"
-                    title="Owner Information"
-                    description="Tell us about the person who will manage this hotel."
-                  />
-
-                  <div className="grid gap-5 sm:grid-cols-2">
-                    <Field label="Full Name" required>
+              <div className="flex flex-col gap-4 min-h-[260px]">
+                {/* Step 0 — Basic Info */}
+                {step === 0 && (
+                  <>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-sm text-gray-600">Hotel Name *</label>
                       <input
                         type="text"
-                        placeholder="e.g. Asif Akbar"
-                        className={inputClass("ownerName")}
-                        value={formData.ownerName}
-                        onChange={(e) =>
-                          updateField("ownerName", e.target.value)
-                        }
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        placeholder="e.g. The Grand Palace Hotel"
+                        className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-emerald-500"
                       />
-                      {renderError("ownerName")}
-                    </Field>
-
-                    <Field label="Email Address" required>
-                      <input
-                        type="email"
-                        placeholder="owner@example.com"
-                        className={inputClass("email")}
-                        value={formData.email}
-                        onChange={(e) =>
-                          updateField("email", e.target.value)
-                        }
-                      />
-                      {renderError("email")}
-                    </Field>
-
-                    <Field label="Phone Number" required>
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-sm text-gray-600">Phone Number *</label>
                       <input
                         type="tel"
-                        placeholder="+92 300 1234567"
-                        className={inputClass("phone")}
+                        name="phone"
                         value={formData.phone}
-                        onChange={(e) =>
-                          updateField("phone", e.target.value)
-                        }
+                        onChange={handleChange}
+                        placeholder="+92 300 1234567"
+                        className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-emerald-500"
                       />
-                      {renderError("phone")}
-                    </Field>
-
-                    <Field label="Password" required>
-                      <div className="relative">
-                        <input
-                          type={
-                            showPassword ? "text" : "password"
-                          }
-                          placeholder="Minimum 8 characters"
-                          className={`${inputClass(
-                            "password"
-                          )} pr-12`}
-                          value={formData.password}
-                          onChange={(e) =>
-                            updateField(
-                              "password",
-                              e.target.value
-                            )
-                          }
-                        />
-
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setShowPassword(!showPassword)
-                          }
-                          className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700"
-                        >
-                          {showPassword ? (
-                            <EyeOff size={18} />
-                          ) : (
-                            <Eye size={18} />
-                          )}
-                        </button>
-                      </div>
-                      {renderError("password")}
-                    </Field>
-
-                    <Field
-                      label="Confirm Password"
-                      required
-                      full
-                    >
-                      <div className="relative sm:max-w-[calc(50%-10px)]">
-                        <input
-                          type={
-                            showConfirmPassword
-                              ? "text"
-                              : "password"
-                          }
-                          placeholder="Re-enter your password"
-                          className={`${inputClass(
-                            "confirmPassword"
-                          )} pr-12`}
-                          value={formData.confirmPassword}
-                          onChange={(e) =>
-                            updateField(
-                              "confirmPassword",
-                              e.target.value
-                            )
-                          }
-                        />
-
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setShowConfirmPassword(
-                              !showConfirmPassword
-                            )
-                          }
-                          className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"
-                        >
-                          {showConfirmPassword ? (
-                            <EyeOff size={18} />
-                          ) : (
-                            <Eye size={18} />
-                          )}
-                        </button>
-                      </div>
-                      {renderError("confirmPassword")}
-                    </Field>
-                  </div>
-                </section>
-              )}
-
-              {/* STEP 2 */}
-              {currentStep === 1 && (
-                <section>
-                  <StepHeading
-                    number="02"
-                    title="Hotel Information"
-                    description="Add the basic information guests will see about your hotel."
-                  />
-
-                  <div className="space-y-5">
-                    <Field label="Hotel Name" required>
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-sm text-gray-600">Hotel Email</label>
                       <input
-                        type="text"
-                        placeholder="e.g. Hotelify Grand Hotel"
-                        className={inputClass("hotelName")}
-                        value={formData.hotelName}
-                        onChange={(e) =>
-                          updateField(
-                            "hotelName",
-                            e.target.value
-                          )
-                        }
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        placeholder="contact@yourhotel.com"
+                        className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-emerald-500"
                       />
-                      {renderError("hotelName")}
-                    </Field>
-
-                    <Field label="Hotel Type" required>
-                      <select
-                        className={inputClass("hotelType")}
-                        value={formData.hotelType}
-                        onChange={(e) =>
-                          updateField(
-                            "hotelType",
-                            e.target.value
-                          )
-                        }
-                      >
-                        <option value="">
-                          Select hotel type
-                        </option>
-                        <option value="hotel">Hotel</option>
-                        <option value="resort">Resort</option>
-                        <option value="guest-house">
-                          Guest House
-                        </option>
-                        <option value="boutique">
-                          Boutique Hotel
-                        </option>
-                        <option value="motel">Motel</option>
-                        <option value="hostel">Hostel</option>
-                        <option value="apartment">
-                          Hotel Apartment
-                        </option>
-                      </select>
-                      {renderError("hotelType")}
-                    </Field>
-
-                    <Field
-                      label="Hotel Description"
-                      required
-                    >
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-sm text-gray-600">Description</label>
                       <textarea
-                        rows="6"
-                        placeholder="Describe your hotel, rooms, atmosphere and what makes it special..."
-                        className={`${inputClass(
-                          "description"
-                        )} resize-none`}
+                        name="description"
                         value={formData.description}
-                        onChange={(e) =>
-                          updateField(
-                            "description",
-                            e.target.value
-                          )
-                        }
+                        onChange={handleChange}
+                        placeholder="Tell guests what makes your hotel special..."
+                        rows={3}
+                        className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-emerald-500 resize-none"
                       />
-                      {renderError("description")}
-                    </Field>
-                  </div>
-                </section>
-              )}
+                    </div>
+                  </>
+                )}
 
-              {/* STEP 3 */}
-              {currentStep === 2 && (
-                <section>
-                  <StepHeading
-                    number="03"
-                    title="Hotel Location"
-                    description="Where can guests find your hotel?"
-                  />
-
-                  <div className="grid gap-5 sm:grid-cols-2">
-                    <Field label="Country">
-                      <input
-                        disabled
-                        value="Pakistan"
-                        className={`${inputClass(
-                          "country"
-                        )} cursor-not-allowed opacity-70`}
-                      />
-                    </Field>
-
-                    <Field label="Province / Region" required>
-                      <select
-                        className={inputClass("province")}
-                        value={formData.province}
-                        onChange={(e) => {
-                          updateField(
-                            "province",
-                            e.target.value
-                          );
-
-                          updateField("city", "");
-                        }}
-                      >
-                        <option value="">
-                          Select province
-                        </option>
-
-                        {Object.keys(provinces).map(
-                          (province) => (
-                            <option
-                              key={province}
-                              value={province}
-                            >
-                              {province}
-                            </option>
-                          )
-                        )}
-                      </select>
-                      {renderError("province")}
-                    </Field>
-
-                    <Field label="City" required>
-                      <select
-                        disabled={!formData.province}
-                        className={`${inputClass(
-                          "city"
-                        )} disabled:cursor-not-allowed disabled:opacity-50`}
-                        value={formData.city}
-                        onChange={(e) =>
-                          updateField(
-                            "city",
-                            e.target.value
-                          )
-                        }
-                      >
-                        <option value="">
-                          Select city
-                        </option>
-
-                        {(provinces[formData.province] || []).map(
-                          (city) => (
-                            <option key={city} value={city}>
-                              {city}
-                            </option>
-                          )
-                        )}
-                      </select>
-                      {renderError("city")}
-                    </Field>
-
-                    <Field label="Postal Code">
+                {/* Step 1 — Location */}
+                {step === 1 && (
+                  <>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-sm text-gray-600">Address *</label>
                       <input
                         type="text"
-                        placeholder="e.g. 65200"
-                        className={inputClass("postalCode")}
-                        value={formData.postalCode}
-                        onChange={(e) =>
-                          updateField(
-                            "postalCode",
-                            e.target.value
-                          )
-                        }
-                      />
-                    </Field>
-
-                    <Field label="Complete Address" required full>
-                      <textarea
-                        rows="4"
-                        placeholder="Street, area, landmark..."
-                        className={`${inputClass(
-                          "address"
-                        )} resize-none`}
+                        name="address"
                         value={formData.address}
-                        onChange={(e) =>
-                          updateField(
-                            "address",
-                            e.target.value
-                          )
-                        }
+                        onChange={handleChange}
+                        placeholder="Street, area"
+                        className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-emerald-500"
                       />
-                      {renderError("address")}
-                    </Field>
-                  </div>
-                </section>
-              )}
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-sm text-gray-600">City *</label>
+                        <input
+                          type="text"
+                          name="city"
+                          value={formData.city}
+                          onChange={handleChange}
+                          placeholder="Karachi"
+                          className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-emerald-500"
+                        />
+                      </div>
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-sm text-gray-600">Country *</label>
+                        <input
+                          type="text"
+                          name="country"
+                          value={formData.country}
+                          onChange={handleChange}
+                          placeholder="Pakistan"
+                          className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-emerald-500"
+                        />
+                      </div>
+                    </div>
+                  </>
+                )}
 
-              {/* STEP 4 */}
-              {currentStep === 3 && (
-                <section>
-                  <StepHeading
-                    number="04"
-                    title="Hotel Details"
-                    description="Configure your rooms, timings and facilities."
-                  />
-
-                  <div className="grid gap-5 sm:grid-cols-2">
-                    <Field
-                      label="Number of Rooms"
-                      required
-                    >
-                      <input
-                        type="number"
-                        min="1"
-                        placeholder="e.g. 25"
-                        className={inputClass("rooms")}
-                        value={formData.rooms}
-                        onChange={(e) =>
-                          updateField(
-                            "rooms",
-                            e.target.value
-                          )
-                        }
-                      />
-                      {renderError("rooms")}
-                    </Field>
-
-                    <Field label="Check-in Time">
-                      <input
-                        type="time"
-                        className={inputClass("checkIn")}
-                        value={formData.checkIn}
-                        onChange={(e) =>
-                          updateField(
-                            "checkIn",
-                            e.target.value
-                          )
-                        }
-                      />
-                    </Field>
-
-                    <Field label="Check-out Time">
-                      <input
-                        type="time"
-                        className={inputClass("checkOut")}
-                        value={formData.checkOut}
-                        onChange={(e) =>
-                          updateField(
-                            "checkOut",
-                            e.target.value
-                          )
-                        }
-                      />
-                    </Field>
-                  </div>
-
-                  <div className="mt-7">
-                    <label className="mb-3 block text-sm font-semibold text-slate-700">
-                      Hotel Facilities{" "}
-                      <span className="text-red-500">*</span>
+                {/* Step 2 — Amenities */}
+                {step === 2 && (
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-sm text-gray-600 mb-1">
+                      Select the amenities your hotel offers
                     </label>
-
-                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                      {facilityOptions.map((facility) => {
-                        const selected =
-                          formData.facilities.includes(
-                            facility
-                          );
-
+                    <div className="grid grid-cols-2 gap-3">
+                      {amenityOptions.map(({ label, icon: Icon }) => {
+                        const active = selectedAmenities.includes(label);
                         return (
                           <button
                             type="button"
-                            key={facility}
-                            onClick={() =>
-                              toggleFacility(facility)
-                            }
-                            className={`rounded-xl border px-3 py-3 text-left text-sm transition ${
-                              selected
-                                ? "border-[#00987e] bg-[#00987e]/10 font-medium text-[#007e6a]"
-                                : "border-slate-200 bg-slate-50 text-slate-600 hover:border-[#00987e]/40"
+                            key={label}
+                            onClick={() => toggleAmenity(label)}
+                            className={`flex items-center gap-2 px-3 py-2.5 rounded-lg border text-sm transition-colors ${
+                              active
+                                ? "bg-emerald-50 border-emerald-500 text-emerald-700"
+                                : "border-gray-300 text-gray-600 hover:bg-gray-50"
                             }`}
                           >
-                            <span className="mr-2">
-                              {selected ? "✓" : "+"}
-                            </span>
-
-                            {facility}
+                            <Icon className="w-4 h-4" />
+                            {label}
                           </button>
                         );
                       })}
                     </div>
-
-                    {renderError("facilities")}
                   </div>
-                </section>
-              )}
+                )}
 
-              {/* STEP 5 */}
-              {currentStep === 4 && (
-                <section>
-                  <StepHeading
-                    number="05"
-                    title="Verification"
-                    description="Provide verification details so we can verify your hotel."
-                  />
-
-                  <div className="space-y-5">
-                    <Field
-                      label="Owner CNIC / ID Number"
-                      required
+                {/* Step 3 — Photos */}
+                {step === 3 && (
+                  <div className="flex flex-col gap-3">
+                    <label className="text-sm text-gray-600">
+                      Upload hotel images * (up to 5)
+                    </label>
+                    <label
+                      htmlFor="hotel-images"
+                      className="flex flex-col items-center justify-center gap-2 border-2 border-dashed border-gray-300 rounded-xl py-8 cursor-pointer hover:border-emerald-400 hover:bg-emerald-50/40 transition-colors"
                     >
+                      <FaCloudUploadAlt className="w-8 h-8 text-gray-400" />
+                      <span className="text-sm text-gray-500">Click to upload images</span>
                       <input
-                        type="text"
-                        placeholder="e.g. 42101-1234567-1"
-                        className={inputClass("cnic")}
-                        value={formData.cnic}
-                        onChange={(e) =>
-                          updateField(
-                            "cnic",
-                            e.target.value
-                          )
-                        }
+                        id="hotel-images"
+                        type="file"
+                        multiple
+                        accept="image/*"
+                        onChange={handleImageChange}
+                        className="hidden"
                       />
-                      {renderError("cnic")}
-                    </Field>
-
-                    <Field
-                      label="Business Email"
-                      required
-                    >
-                      <input
-                        type="email"
-                        placeholder="info@yourhotel.com"
-                        className={inputClass(
-                          "businessEmail"
-                        )}
-                        value={formData.businessEmail}
-                        onChange={(e) =>
-                          updateField(
-                            "businessEmail",
-                            e.target.value
-                          )
-                        }
-                      />
-                      {renderError("businessEmail")}
-                    </Field>
-
-                    <Field label="Hotel Website">
-                      <input
-                        type="url"
-                        placeholder="https://yourhotel.com"
-                        className={inputClass("website")}
-                        value={formData.website}
-                        onChange={(e) =>
-                          updateField(
-                            "website",
-                            e.target.value
-                          )
-                        }
-                      />
-                    </Field>
-
-                    <label className="flex cursor-pointer gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
-                      <input
-                        type="checkbox"
-                        checked={formData.terms}
-                        onChange={(e) =>
-                          updateField(
-                            "terms",
-                            e.target.checked
-                          )
-                        }
-                        className="mt-1 h-4 w-4 accent-[#00987e]"
-                      />
-
-                      <span className="text-sm leading-6 text-slate-600">
-                        I agree to Hotelify's{" "}
-                        <span className="font-semibold text-[#00987e]">
-                          Terms & Conditions
-                        </span>{" "}
-                        and confirm that the information
-                        provided is accurate.
-                      </span>
                     </label>
 
-                    {renderError("terms")}
-                  </div>
-                </section>
-              )}
-
-              {/* STEP 6 */}
-              {currentStep === 5 && (
-                <section>
-                  <StepHeading
-                    number="06"
-                    title="Review & Register"
-                    description="Review your information before creating your Hotelify owner account."
-                  />
-
-                  <div className="space-y-4">
-                    <ReviewCard
-                      title="Owner Information"
-                      icon={<User size={18} />}
-                    >
-                      <ReviewRow
-                        label="Name"
-                        value={formData.ownerName}
-                      />
-                      <ReviewRow
-                        label="Email"
-                        value={formData.email}
-                      />
-                      <ReviewRow
-                        label="Phone"
-                        value={formData.phone}
-                      />
-                    </ReviewCard>
-
-                    <ReviewCard
-                      title="Hotel Information"
-                      icon={<Hotel size={18} />}
-                    >
-                      <ReviewRow
-                        label="Hotel"
-                        value={formData.hotelName}
-                      />
-                      <ReviewRow
-                        label="Type"
-                        value={formData.hotelType}
-                      />
-                    </ReviewCard>
-
-                    <ReviewCard
-                      title="Location"
-                      icon={<MapPin size={18} />}
-                    >
-                      <ReviewRow
-                        label="Province"
-                        value={formData.province}
-                      />
-                      <ReviewRow
-                        label="City"
-                        value={formData.city}
-                      />
-                      <ReviewRow
-                        label="Address"
-                        value={formData.address}
-                      />
-                    </ReviewCard>
-
-                    <ReviewCard
-                      title="Hotel Details"
-                      icon={<Building2 size={18} />}
-                    >
-                      <ReviewRow
-                        label="Rooms"
-                        value={formData.rooms}
-                      />
-                      <ReviewRow
-                        label="Check-in"
-                        value={formData.checkIn}
-                      />
-                      <ReviewRow
-                        label="Check-out"
-                        value={formData.checkOut}
-                      />
-
-                      <div className="mt-3">
-                        <p className="text-xs text-slate-400">
-                          Facilities
-                        </p>
-
-                        <div className="mt-2 flex flex-wrap gap-2">
-                          {formData.facilities.map(
-                            (facility) => (
-                              <span
-                                key={facility}
-                                className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-[#007e6a]"
-                              >
-                                {facility}
-                              </span>
-                            )
-                          )}
-                        </div>
+                    {imagePreviews.length > 0 && (
+                      <div className="grid grid-cols-3 gap-3 mt-2">
+                        {imagePreviews.map((src, idx) => (
+                          <div key={idx} className="relative">
+                            <img
+                              src={src}
+                              alt={`Preview ${idx + 1}`}
+                              className="w-full h-20 object-cover rounded-lg"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => removeImage(idx)}
+                              className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-white rounded-full shadow flex items-center justify-center"
+                            >
+                              <FaTimes className="w-2.5 h-2.5 text-gray-600" />
+                            </button>
+                          </div>
+                        ))}
                       </div>
-                    </ReviewCard>
+                    )}
                   </div>
+                )}
 
-                  <div className="mt-6 flex items-start gap-3 rounded-2xl bg-[#00987e]/5 p-5">
-                    <ShieldCheck
-                      className="mt-0.5 shrink-0 text-[#00987e]"
-                      size={22}
-                    />
-
-                    <div>
-                      <p className="font-semibold text-slate-800">
-                        Ready to join Hotelify?
+                {/* Step 4 — Review */}
+                {step === 4 && (
+                  <div className="flex flex-col gap-3 text-sm">
+                    <div className="border rounded-xl p-4 flex flex-col gap-1.5">
+                      <p><span className="text-gray-500">Hotel Name:</span> {formData.name}</p>
+                      <p><span className="text-gray-500">Phone:</span> {formData.phone}</p>
+                      {formData.email && <p><span className="text-gray-500">Email:</span> {formData.email}</p>}
+                      <p><span className="text-gray-500">Address:</span> {formData.address}, {formData.city}, {formData.country}</p>
+                      {formData.description && (
+                        <p><span className="text-gray-500">Description:</span> {formData.description}</p>
+                      )}
+                      <p>
+                        <span className="text-gray-500">Amenities:</span>{" "}
+                        {selectedAmenities.length > 0 ? selectedAmenities.join(", ") : "None selected"}
                       </p>
-
-                      <p className="mt-1 text-sm leading-6 text-slate-500">
-                        Click "Register Hotel" to create your
-                        owner account. After registration,
-                        you can log in and access your dedicated
-                        hotel dashboard.
-                      </p>
+                      <p><span className="text-gray-500">Images:</span> {imageFiles.length} uploaded</p>
                     </div>
+                    <p className="text-xs text-gray-500">
+                      Next, you'll pay the ${REGISTRATION_FEE} registration fee to complete your
+                      hotel listing. Your listing goes live after admin approval.
+                    </p>
                   </div>
-                </section>
-              )}
+                )}
 
-              {/* Navigation */}
-              <div className="mt-10 flex items-center justify-between border-t border-slate-100 pt-6">
-                <button
-                  type="button"
-                  onClick={handleBack}
-                  disabled={currentStep === 0}
-                  className={`inline-flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold transition ${
-                    currentStep === 0
-                      ? "cursor-not-allowed text-slate-300"
-                      : "text-slate-600 hover:bg-slate-100"
-                  }`}
-                >
-                  <ArrowLeft size={18} />
-                  Back
-                </button>
+                {/* Step 5 — Payment */}
+                {step === 5 && (
+                  <div className="flex flex-col gap-4">
+                    <div className="flex items-center justify-between border rounded-xl p-4 bg-gray-50">
+                      <span className="text-sm text-gray-600">Registration Fee</span>
+                      <span className="text-xl font-semibold text-gray-800">${REGISTRATION_FEE}</span>
+                    </div>
 
-                {currentStep < steps.length - 1 ? (
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-sm text-gray-600">Name on Card *</label>
+                      <input
+                        type="text"
+                        value={cardDetails.nameOnCard}
+                        onChange={(e) => setCardDetails({ ...cardDetails, nameOnCard: e.target.value })}
+                        placeholder="As shown on your card"
+                        className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-emerald-500"
+                      />
+                    </div>
+
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-sm text-gray-600">Card Number *</label>
+                      <div className="relative">
+                        <FaCreditCard className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+                        <input
+                          type="text"
+                          value={cardDetails.cardNumber}
+                          onChange={(e) => setCardDetails({ ...cardDetails, cardNumber: e.target.value })}
+                          placeholder="1234 5678 9012 3456"
+                          maxLength={19}
+                          className="w-full border border-gray-300 rounded-lg pl-9 pr-3 py-2 outline-none focus:border-emerald-500"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-sm text-gray-600">Expiry (MM/YY) *</label>
+                        <input
+                          type="text"
+                          value={cardDetails.expiry}
+                          onChange={(e) => setCardDetails({ ...cardDetails, expiry: e.target.value })}
+                          placeholder="MM/YY"
+                          maxLength={5}
+                          className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-emerald-500"
+                        />
+                      </div>
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-sm text-gray-600">CVV *</label>
+                        <input
+                          type="password"
+                          value={cardDetails.cvv}
+                          onChange={(e) => setCardDetails({ ...cardDetails, cvv: e.target.value })}
+                          placeholder="123"
+                          maxLength={4}
+                          className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-emerald-500"
+                        />
+                      </div>
+                    </div>
+
+                    <p className="flex items-center gap-2 text-xs text-gray-400">
+                      <FaLock className="w-3 h-3" /> This is a demo form — no real payment is processed yet.
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Navigation buttons */}
+              <div className="flex items-center justify-between mt-6">
+                {step > 0 ? (
                   <button
                     type="button"
-                    onClick={handleNext}
-                    className="inline-flex items-center gap-2 rounded-xl bg-[#00987e] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-[#00987e]/20 transition hover:bg-[#007e6a] hover:shadow-xl"
+                    onClick={goBack}
+                    className="flex items-center gap-2 px-5 py-2 border border-gray-300 text-gray-600 rounded-full text-sm hover:bg-gray-50 transition-colors"
                   >
-                    Next
-                    <ArrowRight size={18} />
+                    <FaArrowLeft className="w-3.5 h-3.5" /> Back
                   </button>
                 ) : (
                   <button
-                    type="submit"
-                    className="inline-flex items-center gap-2 rounded-xl bg-[#00987e] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-[#00987e]/20 transition hover:bg-[#007e6a] hover:shadow-xl"
+                    type="button"
+                    onClick={onClose}
+                    className="px-5 py-2 border border-gray-300 text-gray-600 rounded-full text-sm hover:bg-gray-50 transition-colors"
                   >
-                    Register Hotel
-                    <Check size={18} />
+                    Cancel
+                  </button>
+                )}
+
+                {step < steps.length - 1 ? (
+                  <button
+                    type="button"
+                    onClick={goNext}
+                    className="flex items-center gap-2 px-6 py-2 bg-emerald-500 text-white rounded-full text-sm hover:bg-emerald-600 transition-colors"
+                  >
+                    {step === 4 ? "Proceed to Payment" : "Next"} <FaArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handlePayAndSubmit}
+                    disabled={loading}
+                    className="flex items-center gap-2 px-6 py-2 bg-emerald-500 text-white rounded-full text-sm hover:bg-emerald-600 transition-colors disabled:opacity-60"
+                  >
+                    <FaLock className="w-3 h-3" />
+                    {loading ? "Processing..." : `Pay $${REGISTRATION_FEE} & Register`}
                   </button>
                 )}
               </div>
-            </form>
-          </main>
+            </>
+          )}
         </div>
-
-        <p className="mt-6 text-center text-xs text-slate-400">
-          © {new Date().getFullYear()} Hotelify. All rights reserved.
-        </p>
       </div>
-    </div>
-  );
-};
-
-/* ---------------- Components ---------------- */
-
-const StepHeading = ({ number, title, description }) => {
-  return (
-    <div className="mb-8">
-      <div className="mb-3 flex items-center gap-3">
-        <span className="text-sm font-bold tracking-widest text-[#00987e]">
-          {number}
-        </span>
-
-        <div className="h-px w-8 bg-[#00987e]/30" />
-      </div>
-
-      <h2 className="text-2xl font-bold tracking-tight text-slate-900">
-        {title}
-      </h2>
-
-      <p className="mt-2 max-w-xl text-sm leading-6 text-slate-500">
-        {description}
-      </p>
-    </div>
-  );
-};
-
-const Field = ({ label, required, children, full }) => {
-  return (
-    <div className={full ? "sm:col-span-2" : ""}>
-      <label className="mb-2 block text-sm font-semibold text-slate-700">
-        {label}
-
-        {required && (
-          <span className="ml-1 text-red-500">*</span>
-        )}
-      </label>
-
-      {children}
-    </div>
-  );
-};
-
-const ReviewCard = ({ title, icon, children }) => {
-  return (
-    <div className="rounded-2xl border border-slate-200 p-5">
-      <div className="mb-4 flex items-center gap-2">
-        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#00987e]/10 text-[#00987e]">
-          {icon}
-        </div>
-
-        <h3 className="font-semibold text-slate-800">
-          {title}
-        </h3>
-      </div>
-
-      {children}
-    </div>
-  );
-};
-
-const ReviewRow = ({ label, value }) => {
-  return (
-    <div className="flex flex-col gap-1 border-b border-slate-100 py-2 last:border-0 sm:flex-row sm:items-center sm:justify-between">
-      <span className="text-xs text-slate-400">
-        {label}
-      </span>
-
-      <span className="max-w-[70%] break-words text-sm font-medium text-slate-700 sm:text-right">
-        {value || "-"}
-      </span>
     </div>
   );
 };
