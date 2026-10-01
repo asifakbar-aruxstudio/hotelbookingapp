@@ -8,8 +8,8 @@ const Sidebar = () => {
   // Sidebar menu items with icons
   const sidebarData = [
     { name: "Dashboard",       path: "/owner/dashboard",       icon: "fa-solid fa-house" },           // 🏠 Home icon
-    { name: "Register Hotel",  path: "/owner/register-hotel",  icon: "fa-solid fa-hotel" },           // 🏨 Hotel icon
-    { name: "My Hotels",       path: "/owner/my-hotels",       icon: "fa-solid fa-building" },        // 🏢 Building icon
+    // { name: "Register Hotel",  path: "/owner/register-hotel",  icon: "fa-solid fa-hotel" },           // 🏨 Hotel icon
+    // { name: "My Hotels",       path: "/owner/my-hotels",       icon: "fa-solid fa-building" },        // 🏢 Building icon
     { name: "Add Room",        path: "/owner/add-room",        icon: "fa-solid fa-bed" },             // 🛏️ Bed icon
     { name: "List of Rooms",   path: "/owner/list-rooms",      icon: "fa-solid fa-list" },            // 📋 List icon
     { name: "Bookings",        path: "/owner/bookings",        icon: "fa-solid fa-calendar-check" },  // 📅 Calendar check icon
