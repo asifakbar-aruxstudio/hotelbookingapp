@@ -44,7 +44,8 @@ const isOwnerPath = useLocation().pathname.includes('/owner');
             <Route index element={<Dashboard />} />
             <Route path="add-room" element={<AddRoom />} />
             <Route path="list-rooms" element={<ListRooms />} />
-</Route>
+            
+            </Route>
 
              {/* <Route path="/contact" element={<ContactUs />} />
              <Route path="/privacy" element={<PrivacyPolicy />} />

@@ -7,7 +7,7 @@ const Sidebar = () => {
 
   // Sidebar menu items with icons
   const sidebarData = [
-    { name: "Dashboard",       path: "/owner/dashboard",       icon: "fa-solid fa-house" },           // 🏠 Home icon
+    { name: "Dashboard",       path: "/owner",       icon: "fa-solid fa-house" },           // 🏠 Home icon
     // { name: "Register Hotel",  path: "/owner/register-hotel",  icon: "fa-solid fa-hotel" },           // 🏨 Hotel icon
     // { name: "My Hotels",       path: "/owner/my-hotels",       icon: "fa-solid fa-building" },        // 🏢 Building icon
     { name: "Add Room",        path: "/owner/add-room",        icon: "fa-solid fa-bed" },             // 🛏️ Bed icon
@@ -56,10 +56,11 @@ const Sidebar = () => {
             key={index}
             to={item.path}
             className={({ isActive }) =>
-              `group flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200 relative
+              `group flex items-center gap-3 px-3 py-3 rounded-lg transition-all 
+            duration-200 relative
                ${
                  isActive
-                   ? "bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-semibold shadow-md"
+                   ? "bg-gradient-to-r from-yellow-500 to-green-500 text-white font-semibold shadow-md"
                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                }`
             }
