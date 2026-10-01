@@ -32,7 +32,8 @@ const Sidebar = () => {
             className={`${collapsed ? "h-8" : "h-10"} w-auto object-contain transition-all`}
           />
           {!collapsed && (
-            <span className="text-lg font-bold tracking-wide bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent">
+            <span className="text-lg font-bold tracking-wide bg-gradient-to-r from-green-500 
+            to-orange-500 bg-clip-text text-transparent">
               Owner Panel
             </span>
           )}
