@@ -13,18 +13,15 @@ import HotelDetail from "./pages/HotelDetail";
 import RoomDetails from "./pages/RoomDetails";
 import MyBookings from "./pages/MyBookings";
 import HotelReg from './components/HotelReg';
-
-
-
-
-
+import Layout from './pages/HotelOwner/Layout';
 
 function App() {
 const isOwnerPath = useLocation().pathname.includes('/owner');
   return (
     <>
      {!isOwnerPath && <Navbar />}
-     {false && <HotelReg/>}
+     { false && <HotelReg/> }
+       
        <div className ='min-h-[70vh]' > 
         <Routes>
             <Route path="/" element={<Home />} />
@@ -38,6 +35,8 @@ const isOwnerPath = useLocation().pathname.includes('/owner');
             <Route path="/privacy" element={<PrivacyPolicy />} />
             <Route path="/terms" element={<TermsOfService />} />
             <Route path="/cookies" element={<CookiePolicy />} />
+            <Route path="/owner" element={<Layout />} />
+    
         </Routes>
         </div>
         <Footer />

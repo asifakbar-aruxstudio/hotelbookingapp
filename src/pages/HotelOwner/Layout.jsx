@@ -1,13 +1,17 @@
-import Navbar from "../components/hotelOwner/Navbar";
+import Navbar from "../../components/hotelOwner/Navbar";
+import Sidebar from "../../components/hotelOwner/Sidebar";
 
 const Layout = ({ children }) => {
   return (
     <div>
         <Navbar />
-        <main>
-            {children}
-        </main>
-    </div>
+        <div className="flex">
+            <Sidebar />
+            <main className="flex-1">
+                {children}
+            </main>
+        </div>  
+        </div>
   )
 }
 
