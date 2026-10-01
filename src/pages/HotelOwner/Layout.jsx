@@ -1,17 +1,18 @@
 import Navbar from "../../components/hotelOwner/Navbar";
 import Sidebar from "../../components/hotelOwner/Sidebar";
+import { Outlet } from "react-router-dom";
 
-const Layout = ({ children }) => {
+const Layout = () => {
   return (
-    <div>
+    <div className="flex h-screen bg-gray-100">
+      <Sidebar />
+      <div className="flex-1 flex flex-col overflow-hidden">
         <Navbar />
-        <div className="flex">
-            <Sidebar />
-            <main className="flex-1">
-                {children}
-            </main>
-        </div>  
-        </div>
+        <main className="flex-1 overflow-y-auto p-6">
+          <Outlet />
+        </main>
+      </div>
+    </div>
   )
 }
 

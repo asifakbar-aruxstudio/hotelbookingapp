@@ -35,7 +35,15 @@ const isOwnerPath = useLocation().pathname.includes('/owner');
             <Route path="/privacy" element={<PrivacyPolicy />} />
             <Route path="/terms" element={<TermsOfService />} />
             <Route path="/cookies" element={<CookiePolicy />} />
-            <Route path="/owner" element={<Layout />} />
+            <Route path="/owner" element={<Layout />} >
+
+            {/* <Route path="dashboard" element={<Dashboard />} />
+            <Route path="register-hotel" element={<RegisterHotel />} />
+            <Route path="my-hotels" element={<MyHotels />} />
+            <Route path="add-room" element={<AddRoom />} />
+            <Route path="list-rooms" element={<ListRooms />} /> */}
+
+</Route>
     
         </Routes>
         </div>
